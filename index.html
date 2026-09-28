@@ -142,14 +142,8 @@
 
             <!-- + Add New placeholder when Registration is active -->
             <div id="addnew-reg-slot">
-              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center justify-between px-4 py-1.5 pl-6 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
-                <span class="flex items-center gap-1.5">
-                  <span class="text-amber-400 font-mono text-xs">+</span>
-                  <span>Add New</span>
-                </span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
-                  Addon
-                </span>
+              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center px-4 py-1.5 pl-6 text-slate-300 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+                <span>Add New</span>
               </a>
             </div>
 
@@ -160,14 +154,8 @@
 
             <!-- + Add New placeholder when Login is active -->
             <div id="addnew-login-slot" class="hidden">
-              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center justify-between px-4 py-1.5 pl-6 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
-                <span class="flex items-center gap-1.5">
-                  <span class="text-amber-400 font-mono text-xs">+</span>
-                  <span>Add New</span>
-                </span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
-                  Addon
-                </span>
+              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center px-4 py-1.5 pl-6 text-slate-300 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+                <span>Add New</span>
               </a>
             </div>
 
@@ -523,8 +511,8 @@
 
     const specs = {
       1: {
-        badge: "Approach 1 Active",
-        desc: "<strong>Correct Submenu Order:</strong> <code>Registration Form</code> &rarr; <code>Login Form</code> &rarr; <code>+ Add New [Addon]</code> (priority 8 hook order)."
+        badge: "Approach 1 Active (PO Approved)",
+        desc: "<strong>PO Decision:</strong> Standard <code>Add New</code> submenu item (no custom badge/styling) placed contextually under the active form type. In single form mode, menu is <code>Registration Form</code>; once multiple forms is activated, it becomes <code>Registration Forms</code> linking to the table list."
       },
       2: {
         badge: "Approach 2 Active",
@@ -686,6 +674,8 @@
         spinner.classList.add('hidden');
         confirmBtn.disabled = false;
 
+        document.getElementById('sidebar-item-reg').textContent = "Registration Forms";
+
         document.getElementById('module-indicator').innerHTML = `
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Addon: <strong>Active (Multi-Form Enabled)</strong></span>
@@ -698,6 +688,7 @@
 
     function resetAll() {
       isModuleActive = false;
+      document.getElementById('sidebar-item-reg').textContent = "Registration Form";
       document.getElementById('module-indicator').innerHTML = `
         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
         <span>Addon: <strong>Inactive (Single Form)</strong></span>
