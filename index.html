@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .wp-admin-sidebar {
+      background-color: #1d2327;
+      color: #c3c4c7;
+    }
+    .wp-menu-item:hover, .wp-menu-item.active {
+      background-color: #2271b1;
+      color: #fff;
+    }
+    .swal2-backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+    }
+    @keyframes swalPop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .swal2-animate {
+      animation: swalPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideDown {
+      0% { transform: translateY(-8px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    .slide-down {
+      animation: slideDown 0.2s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden text-xs">
+
+  <!-- Top Controller Bar -->
+  <header class="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center justify-between shrink-0 shadow-sm z-30">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-indigo-600 text-white font-bold text-xs shadow-sm">UR</span>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-slate-900 text-sm">All 5 Multiple Registration Discovery Approaches</h1>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Menu Order Corrected</span>
+        </div>
+        <p class="text-[11px] text-slate-500">Fixed: <strong>+ Add New</strong> is placed below <strong>Login Form</strong> matching real WordPress hook priorities.</p>
+      </div>
+    </div>
+
+    <!-- Reset & Status -->
+    <div class="flex items-center gap-3">
+      <div id="module-indicator" class="px-2.5 py-1 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        <span>Addon: <strong>Inactive (Single Form)</strong></span>
+      </div>
+
+      <button onclick="resetAll()" class="px-2.5 py-1 rounded border border-slate-300 text-slate-600 hover:bg-slate-50 transition font-semibold flex items-center gap-1">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Reset State
+      </button>
+    </div>
+  </header>
+
+  <!-- 5 Approaches Selector Nav -->
+  <nav class="bg-slate-50 border-b border-slate-200 px-6 py-2 flex items-center justify-between shrink-0 overflow-x-auto gap-2">
+    <div class="flex items-center gap-1.5">
+      <button id="nav-btn-1" onclick="selectApproach(1)" class="px-3 py-1.5 rounded-md font-semibold transition-all bg-white text-indigo-700 shadow-sm border border-slate-200">
+        1. Sidebar Submenu (+ Add New)
+      </button>
+      <button id="nav-btn-2" onclick="selectApproach(2)" class="px-3 py-1.5 rounded-md font-semibold transition-all text-slate-600 hover:text-slate-900 border border-transparent">
+        2. Builder Header (+ Add New Form)
+      </button>
+      <button id="nav-btn-3" onclick="selectApproach(3)" class="px-3 py-1.5 rounded-md font-semibold transition-all text-slate-600 hover:text-slate-900 border border-transparent">
+        3. Help Widget (?) "Create Multiple Forms"
+      </button>
+      <button id="nav-btn-4" onclick="selectApproach(4)" class="px-3 py-1.5 rounded-md font-semibold transition-all text-slate-600 hover:text-slate-900 border border-transparent">
+        4. In-Builder Top Notice Banner
+      </button>
+      <button id="nav-btn-5" onclick="selectApproach(5)" class="px-3 py-1.5 rounded-md font-semibold transition-all text-slate-600 hover:text-slate-900 border border-transparent">
+        5. Direct URL /add-new Gate
+      </button>
+    </div>
+
+    <!-- Active View Selector (Registration Builder vs Login Form) -->
+    <div id="screen-toggle-box" class="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded text-[11px]">
+      <button id="toggle-reg" onclick="setScreen('reg')" class="px-2.5 py-1 rounded font-medium bg-white text-slate-800 shadow-xs">
+        Registration Form
+      </button>
+      <button id="toggle-login" onclick="setScreen('login')" class="px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900">
+        Login Form
+      </button>
+    </div>
+  </nav>
+
+  <!-- Spec Info Card -->
+  <div id="spec-card" class="bg-indigo-900 text-white px-6 py-2 shrink-0 flex items-center justify-between shadow-inner">
+    <div class="flex items-center gap-3">
+      <span id="spec-badge" class="px-2 py-0.5 rounded bg-indigo-800 border border-indigo-700 font-bold uppercase tracking-wider text-[10px] text-indigo-200">
+        Approach 1 Active
+      </span>
+      <div id="spec-desc" class="text-indigo-100 text-xs">
+        <strong>Correct Submenu Order:</strong> <code>Registration Form</code> &rarr; <code>Login Form</code> &rarr; <code>+ Add New [Addon]</code> (priority 8 hook order).
+      </div>
+    </div>
+    <div class="text-[11px] text-indigo-300 font-mono">
+      Trigger: Click highlighted element below
+    </div>
+  </div>
+
+  <!-- Main WordPress Layout -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- Left Admin Sidebar -->
+    <aside class="w-60 wp-admin-sidebar flex flex-col shrink-0 text-xs select-none">
+      <div class="p-3 border-b border-slate-800/80 font-semibold text-slate-400 flex items-center gap-2">
+        <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 13a1 1 0 112 0 1 1 0 01-2 0zm1-8a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/></svg>
+        <span>WordPress 6.7</span>
+      </div>
+
+      <nav class="flex-1 py-2 overflow-y-auto space-y-0.5">
+        <div class="px-3 py-2 text-slate-400 flex items-center gap-2.5 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Dashboard
+        </div>
+
+        <!-- User Registration Active Menu -->
+        <div class="bg-[#2271b1] text-white">
+          <div class="px-3 py-2 font-medium flex items-center justify-between cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold">U</span>
+              <span class="font-semibold">User Registration</span>
+            </div>
+          </div>
+          
+          <!-- Submenu List (ORDER: Registration Form -> Login Form -> + Add New) -->
+          <div class="bg-[#101517] py-1 text-[11px] space-y-0.5">
+            
+            <!-- 1. Registration Form -->
+            <a href="javascript:void(0)" onclick="setScreen('reg')" id="sidebar-item-reg" class="block px-4 py-1.5 text-white font-semibold bg-[#1d2327]">
+              Registration Form
+            </a>
+
+            <!-- 2. Login Form -->
+            <a href="javascript:void(0)" onclick="setScreen('login')" id="sidebar-item-login" class="block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40">
+              Login Form
+            </a>
+
+            <!-- 3. + Add New (CORRECTLY POSITIONED BELOW LOGIN FORM!) -->
+            <a href="javascript:void(0)" onclick="openModalForApproach(1)" id="sidebar-item-addnew" class="flex items-center justify-between px-4 py-1.5 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
+              <span class="flex items-center gap-1.5">
+                <span class="text-amber-400 font-mono text-xs">+</span>
+                <span>Add New</span>
+              </span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
+                Addon
+              </span>
+            </a>
+
+            <!-- 4. Settings -->
+            <div class="px-4 py-1.5 hover:text-[#72aee6] cursor-pointer text-slate-400">Settings</div>
+            
+            <!-- 5. Addons -->
+            <div class="px-4 py-1.5 hover:text-[#72aee6] cursor-pointer text-slate-400">Addons</div>
+          </div>
+        </div>
+
+        <div class="px-3 py-2 text-slate-400 flex items-center gap-2.5 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          Users
+        </div>
+      </nav>
+
+      <div class="p-3 bg-slate-900 border-t border-slate-800 text-[11px] text-slate-400">
+        Forms Count: <strong class="text-white">1 (Single Form)</strong>
+      </div>
+    </aside>
+
+    <!-- Main Content Stage -->
+    <main class="flex-1 flex flex-col bg-slate-100 overflow-hidden relative">
+
+      <!-- ========================================================== -->
+      <!-- SCREEN A: REGISTRATION FORM BUILDER -->
+      <!-- ========================================================== -->
+      <section id="screen-reg" class="flex-1 flex flex-col bg-slate-100 overflow-hidden">
+        
+        <!-- Builder Top Header -->
+        <div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0 shadow-sm z-10">
+          <div class="flex items-center gap-3">
+            <div class="p-1">
+              <svg class="w-6 h-6 text-indigo-600" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M27.58 4a27.9 27.9 0 0 0-5.17 4 27 27 0 0 0-4.09 5.08 33.06 33.06 0 0 1 2 4.65A23.78 23.78 0 0 1 24 12.15V18a8 8 0 0 1-5.89 7.72l-.21.05a27 27 0 0 0-1.9-8.16A27.9 27.9 0 0 0 9.59 8a27.9 27.9 0 0 0-5.17-4L4 3.77V18a12 12 0 0 0 9.93 11.82h.14a11.72 11.72 0 0 0 3.86 0h.14A12 12 0 0 0 28 18V3.77zM8 18v-5.85a23.86 23.86 0 0 1 5.89 13.57A8 8 0 0 1 8 18zm8-16a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/>
+              </svg>
+            </div>
+            <div class="h-4 w-px bg-slate-200"></div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-800 text-sm">ABC Fitness Club Registration</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">Now Editing</span>
+            </div>
+
+            <!-- APPROACH 2 ELEMENT: Header "+ Add New Form" Button -->
+            <button id="approach-2-btn" onclick="openModalForApproach(2)" class="hidden items-center gap-1.5 px-3 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded text-xs font-semibold shadow-sm transition ring-2 ring-amber-400">
+              <svg class="w-3.5 h-3.5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>+ Add New Form</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 font-mono">Addon</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <code class="px-2 py-1 rounded bg-slate-100 text-slate-600 font-mono text-[11px] border border-slate-200">[user_registration_form id="4691"]</code>
+            <button class="px-3 py-1.5 border border-slate-300 rounded hover:bg-slate-50 text-slate-700 font-medium">Preview</button>
+            <button class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium shadow-sm">Update Form</button>
+          </div>
+        </div>
+
+        <!-- APPROACH 4 ELEMENT: In-Builder Top Notice Banner -->
+        <div id="approach-4-banner" class="hidden bg-indigo-50 border-b border-indigo-200 px-6 py-2.5 items-center justify-between text-xs text-indigo-900 slide-down">
+          <div class="flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-xs">
+              💡
+            </div>
+            <div>
+              <span class="font-bold text-slate-900">Need more than one registration form?</span>
+              <span class="text-slate-600 ml-1">Activate the free <strong>Multiple Registration</strong> addon to create separate forms for different roles, events, or tiers.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openModalForApproach(4)" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-semibold shadow-xs transition">
+              Enable Multiple Forms
+            </button>
+            <button onclick="document.getElementById('approach-4-banner').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-base leading-none p-1">
+              &times;
+            </button>
+          </div>
+        </div>
+
+        <!-- Builder Canvas Body -->
+        <div class="flex-1 flex overflow-hidden">
+          <div class="w-64 bg-white border-r border-slate-200 p-4 shrink-0">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Form Fields</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2 border border-slate-200 rounded text-center bg-slate-50 text-slate-600">Username</div>
+              <div class="p-2 border border-slate-200 rounded text-center bg-slate-50 text-slate-600">User Email</div>
+              <div class="p-2 border border-slate-200 rounded text-center bg-slate-50 text-slate-600">Password</div>
+              <div class="p-2 border border-slate-200 rounded text-center bg-slate-50 text-slate-600">Confirm Pass</div>
+            </div>
+          </div>
+
+          <div class="flex-1 p-6 overflow-y-auto flex justify-center">
+            <div class="w-full max-w-xl bg-white border border-slate-200 rounded-lg p-6 shadow-sm space-y-4">
+              <h3 class="font-bold text-base text-slate-800 pb-2 border-b border-slate-100">ABC Fitness Club Registration</h3>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">Username *</label>
+                <div class="h-8 bg-slate-50 border border-slate-200 rounded"></div>
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-700">User Email *</label>
+                <div class="h-8 bg-slate-50 border border-slate-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APPROACH 3 ELEMENT: Bottom-Right (?) Help Widget -->
+        <div id="approach-3-wrapper" class="absolute bottom-5 right-5 z-40">
+          <button id="help-bubble-btn" onclick="toggleHelpCard()" class="w-12 h-12 rounded-full bg-[#4654b0] hover:bg-[#38438f] text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 focus:outline-none ring-2 ring-indigo-300">
+            <span class="text-xl font-bold">?</span>
+          </button>
+
+          <!-- Help Popup Card -->
+          <div id="help-card" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 z-40 p-4 slide-down space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">How can we help?</h4>
+                <p class="text-[11px] text-slate-400">Choose an option below</p>
+              </div>
+              <button onclick="toggleHelpCard()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+              <div onclick="openModalForApproach(3)" class="flex items-start gap-3 p-2.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 cursor-pointer transition group ring-1 ring-amber-400">
+                <div class="w-8 h-8 rounded-lg bg-amber-200/80 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-bold text-amber-950 flex items-center justify-between">
+                    <span>Create Multiple Forms</span>
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 font-semibold border border-amber-300">Addon</span>
+                  </div>
+                  <p class="text-[11px] text-amber-800 mt-0.5">Activate addon to build additional registration forms</p>
+                </div>
+              </div>
+
+              <a href="https://docs.wpuserregistration.com" target="_blank" class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <div>
+                  <h5 class="font-semibold text-slate-800">Documentation</h5>
+                  <p class="text-[11px] text-slate-400">Full documentation</p>
+                </div>
+              </a>
+
+              <a href="https://wpuserregistration.com/support" target="_blank" class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                </div>
+                <div>
+                  <h5 class="font-semibold text-slate-800">Get Support</h5>
+                  <p class="text-[11px] text-slate-400">Chat with our team</p>
+                </div>
+              </a>
+
+              <a href="https://youtube.com" target="_blank" class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <h5 class="font-semibold text-slate-800">Video Tutorials</h5>
+                  <p class="text-[11px] text-slate-400">Step-by-step guide</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- SCREEN B: LOGIN FORM SETTINGS PAGE -->
+      <!-- ========================================================== -->
+      <section id="screen-login" class="hidden flex-1 flex flex-col bg-slate-100 overflow-hidden">
+        <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0 shadow-sm z-10">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-800 text-sm">Login Form</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">Now Editing</span>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <code class="px-2 py-1 rounded bg-slate-100 text-slate-600 font-mono text-[11px] border border-slate-200">[user_registration_login]</code>
+            <button class="px-3 py-1.5 border border-slate-300 rounded hover:bg-slate-50 text-slate-700 font-medium">View Live</button>
+            <button class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium shadow-sm">Save Settings</button>
+          </div>
+        </div>
+
+        <div class="flex-1 p-6 overflow-y-auto flex justify-center">
+          <div class="w-full max-w-2xl bg-white border border-slate-200 rounded-lg p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h3 class="font-bold text-base text-slate-800">Login Options & Settings</h3>
+              <span class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium border border-emerald-200">Active</span>
+            </div>
+
+            <!-- Callout highlighting the sidebar position -->
+            <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              <div>
+                <div class="font-bold">Notice the Sidebar Order on the Left:</div>
+                <p class="mt-1 leading-relaxed text-amber-800">
+                  The menu order is now: <strong>Registration Form</strong> &rarr; <strong>Login Form</strong> (currently active) &rarr; <strong>+ Add New</strong> (with <code>Addon</code> badge).
+                </p>
+                <p class="mt-1 text-slate-600">
+                  Clicking <strong>+ Add New</strong> directly opens the SweetAlert activation modal!
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-2 text-slate-600">
+              <div class="p-3 bg-slate-50 rounded border border-slate-200 flex items-center justify-between">
+                <span>Redirect after Login</span>
+                <span class="font-mono text-[11px] text-slate-500">/my-account</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded border border-slate-200 flex items-center justify-between">
+                <span>Enable Remember Me</span>
+                <span class="text-emerald-600 font-semibold">Yes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- SCREEN C: APPROACH 5 (DIRECT URL /add-new-registration GATE) -->
+      <!-- ========================================================== -->
+      <section id="screen-gate" class="hidden flex-1 p-6 overflow-y-auto bg-slate-50">
+        <div class="max-w-4xl mx-auto space-y-5">
+          <div class="bg-white border border-amber-300 rounded-xl p-6 shadow-sm flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-base text-slate-900">Multiple Registration Addon Required</h3>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                You currently have 1 active registration form (<em>ABC Fitness Club Registration</em>). Creating and publishing additional registration forms requires enabling the free <strong>Multiple Registration</strong> addon.
+              </p>
+              
+              <div class="mt-4 flex items-center gap-3">
+                <button onclick="openModalForApproach(5)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-xs shadow-sm transition">
+                  Activate Multiple Registration (Free)
+                </button>
+                <button onclick="setScreen('reg')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold text-xs hover:bg-slate-50 transition">
+                  Return to Existing Form
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="opacity-40 pointer-events-none select-none">
+            <h4 class="font-bold text-slate-800 text-sm mb-3">Available Form Templates (Locked until activated)</h4>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="border border-slate-200 bg-white p-4 rounded-lg h-32 flex items-center justify-center text-slate-400 font-medium">Blank Form</div>
+              <div class="border border-slate-200 bg-white p-4 rounded-lg h-32 flex items-center justify-center text-slate-400 font-medium">Student Template</div>
+              <div class="border border-slate-200 bg-white p-4 rounded-lg h-32 flex items-center justify-center text-slate-400 font-medium">Vendor Template</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- SCREEN D: TEMPLATE PICKER (REACHED AFTER ACTIVATION) -->
+      <!-- ========================================================== -->
+      <section id="screen-templates" class="hidden flex-1 p-6 overflow-y-auto bg-slate-50">
+        <div class="max-w-5xl mx-auto space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div>
+              <a href="javascript:void(0)" onclick="setScreen('reg')" class="text-xs text-indigo-600 hover:underline flex items-center gap-1 font-medium">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back to ABC Fitness Club Form
+              </a>
+              <h2 class="text-2xl font-bold text-slate-900 mt-1">Add New Registration Form</h2>
+              <p class="text-xs text-slate-500">Multiple Registration is now active! Pick a template or start from scratch.</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-300 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Multiple Registration Active
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-5">
+            <div class="bg-white border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-lg p-6 flex flex-col items-center justify-center text-center group cursor-pointer transition shadow-sm" onclick="setScreen('reg')">
+              <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <div class="font-bold text-sm text-slate-800 group-hover:text-indigo-600">Start from Scratch</div>
+              <div class="text-xs text-slate-400 mt-1">Create blank form</div>
+              <button class="mt-4 px-3 py-1.5 bg-indigo-600 text-white rounded text-xs font-semibold shadow-sm">Create Form</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col shadow-sm">
+              <div class="h-24 bg-slate-100 rounded mb-3 flex items-center justify-center text-slate-400 text-xs font-mono">Template Preview</div>
+              <div class="font-bold text-sm text-slate-800">Student Registration Form</div>
+              <div class="text-xs text-slate-500 mt-1 flex-1">Pre-configured with student fields.</div>
+              <button onclick="setScreen('reg')" class="mt-4 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-indigo-700 border border-slate-200 rounded text-xs font-semibold">Use Template</button>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col shadow-sm">
+              <div class="h-24 bg-slate-100 rounded mb-3 flex items-center justify-center text-slate-400 text-xs font-mono">Template Preview</div>
+              <div class="font-bold text-sm text-slate-800">Vendor Application Form</div>
+              <div class="text-xs text-slate-500 mt-1 flex-1">Collect company & tax details.</div>
+              <button onclick="setScreen('reg')" class="mt-4 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-indigo-700 border border-slate-200 rounded text-xs font-semibold">Use Template</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- SWEETALERT2 MODAL OVERLAY (EXACT COPY SPEC WITH "ADDON") -->
+      <!-- ========================================================== -->
+      <div id="swal-overlay" class="hidden absolute inset-0 swal2-backdrop z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center border border-slate-100 swal2-animate relative">
+          
+          <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+
+          <!-- Blue Lock Icon from User Registration SweetAlert Theme -->
+          <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4 border border-blue-100">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+
+          <!-- EXACT MODAL TITLE & TEXT WITH "ADDON" -->
+          <h3 id="modal-title" class="text-base font-bold text-slate-900 mb-2">Install dependent addon</h3>
+          <p id="modal-body" class="text-xs text-slate-600 leading-relaxed mb-6">
+            To add multiple forms you need to install/activate <strong>User Registration - Multiple Registration</strong> addon.
+          </p>
+
+          <div class="flex items-center justify-center gap-3">
+            <button onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
+              Cancel
+            </button>
+            
+            <button id="swal-confirm-btn" onclick="executeActivation()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-md transition flex items-center gap-2">
+              <span id="swal-btn-text">Activate Addon</span>
+              <svg id="swal-spinner" class="hidden animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            </button>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-400">
+            Triggers AJAX: <code>user_registration_activate_dependent_module</code>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let activeApproach = 1;
+    let currentScreen = 'reg';
+    let isHelpCardOpen = false;
+    let isModuleActive = false;
+
+    const specs = {
+      1: {
+        badge: "Approach 1 Active",
+        desc: "<strong>Correct Submenu Order:</strong> <code>Registration Form</code> &rarr; <code>Login Form</code> &rarr; <code>+ Add New [Addon]</code> (priority 8 hook order)."
+      },
+      2: {
+        badge: "Approach 2 Active",
+        desc: "<strong>Builder Header:</strong> Places an <code>[+ Add New Form]</code> button with an <code>Addon</code> badge right in the builder top bar next to the form title."
+      },
+      3: {
+        badge: "Approach 3 Active",
+        desc: "<strong>Help Widget (?):</strong> Adds a guided <code>Create Multiple Forms</code> action with an <code>Addon</code> badge inside the bottom-right Quick Links popup card."
+      },
+      4: {
+        badge: "Approach 4 Active",
+        desc: "<strong>In-Builder Top Notice:</strong> Shows a dismissible banner at the top of the canvas with a 1-click <code>[Enable Multiple Forms]</code> action."
+      },
+      5: {
+        badge: "Approach 5 Active",
+        desc: "<strong>Direct URL Gate:</strong> If the user navigates directly to <code>admin.php?page=add-new-registration</code>, displays a dedicated activation gate instead of a silent bounce back."
+      }
+    };
+
+    function selectApproach(num) {
+      activeApproach = num;
+
+      // Update Nav Tabs
+      [1, 2, 3, 4, 5].forEach(n => {
+        const btn = document.getElementById('nav-btn-' + n);
+        if (n === num) {
+          btn.className = "px-3 py-1.5 rounded-md font-semibold transition-all bg-white text-indigo-700 shadow-sm border border-slate-200";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-md font-semibold transition-all text-slate-600 hover:text-slate-900 border border-transparent";
+        }
+      });
+
+      // Update Spec info card
+      document.getElementById('spec-badge').textContent = specs[num].badge;
+      document.getElementById('spec-desc').innerHTML = specs[num].desc;
+
+      // Visibility toggles
+      const sidebarAddNew = document.getElementById('sidebar-item-addnew');
+      const headerAddNewBtn = document.getElementById('approach-2-btn');
+      const helpWidget = document.getElementById('approach-3-wrapper');
+      const banner = document.getElementById('approach-4-banner');
+      const screenToggleBox = document.getElementById('screen-toggle-box');
+
+      sidebarAddNew.classList.add('hidden');
+      headerAddNewBtn.classList.add('hidden');
+      headerAddNewBtn.classList.remove('flex');
+      helpWidget.classList.add('hidden');
+      banner.classList.add('hidden');
+      screenToggleBox.classList.remove('hidden');
+
+      if (num === 1) {
+        sidebarAddNew.classList.remove('hidden');
+        sidebarAddNew.classList.add('flex');
+        setScreen(currentScreen === 'gate' ? 'reg' : currentScreen);
+      } else if (num === 2) {
+        headerAddNewBtn.classList.remove('hidden');
+        headerAddNewBtn.classList.add('flex');
+        setScreen('reg');
+      } else if (num === 3) {
+        helpWidget.classList.remove('hidden');
+        toggleHelpCard(true);
+        setScreen('reg');
+      } else if (num === 4) {
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        setScreen('reg');
+      } else if (num === 5) {
+        screenToggleBox.classList.add('hidden');
+        setScreen('gate');
+      }
+    }
+
+    function setScreen(screen) {
+      currentScreen = screen;
+
+      const screenReg = document.getElementById('screen-reg');
+      const screenLogin = document.getElementById('screen-login');
+      const screenGate = document.getElementById('screen-gate');
+      const screenTemplates = document.getElementById('screen-templates');
+
+      const toggleReg = document.getElementById('toggle-reg');
+      const toggleLogin = document.getElementById('toggle-login');
+      const navReg = document.getElementById('sidebar-item-reg');
+      const navLogin = document.getElementById('sidebar-item-login');
+
+      screenReg.classList.add('hidden');
+      screenLogin.classList.add('hidden');
+      screenGate.classList.add('hidden');
+      screenTemplates.classList.add('hidden');
+
+      if (screen === 'reg') {
+        screenReg.classList.remove('hidden');
+        toggleReg.className = "px-2.5 py-1 rounded font-medium bg-white text-slate-800 shadow-xs";
+        toggleLogin.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
+        navReg.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
+        navLogin.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
+      } else if (screen === 'login') {
+        screenLogin.classList.remove('hidden');
+        toggleLogin.className = "px-2.5 py-1 rounded font-medium bg-white text-slate-800 shadow-xs";
+        toggleReg.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
+        navLogin.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
+        navReg.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
+      } else if (screen === 'gate') {
+        screenGate.classList.remove('hidden');
+      } else if (screen === 'templates') {
+        screenTemplates.classList.remove('hidden');
+      }
+    }
+
+    function toggleHelpCard(forceOpen) {
+      if (typeof forceOpen === 'boolean') {
+        isHelpCardOpen = forceOpen;
+      } else {
+        isHelpCardOpen = !isHelpCardOpen;
+      }
+
+      const card = document.getElementById('help-card');
+      if (isHelpCardOpen) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    }
+
+    function openModalForApproach(apprNum) {
+      if (isModuleActive) {
+        setScreen('templates');
+        return;
+      }
+
+      document.getElementById('swal-overlay').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('swal-overlay').classList.add('hidden');
+    }
+
+    function executeActivation() {
+      const btnText = document.getElementById('swal-btn-text');
+      const spinner = document.getElementById('swal-spinner');
+      const confirmBtn = document.getElementById('swal-confirm-btn');
+
+      btnText.textContent = "Activating...";
+      spinner.classList.remove('hidden');
+      confirmBtn.disabled = true;
+
+      setTimeout(() => {
+        isModuleActive = true;
+        closeModal();
+        
+        btnText.textContent = "Activate Addon";
+        spinner.classList.add('hidden');
+        confirmBtn.disabled = false;
+
+        document.getElementById('module-indicator').innerHTML = `
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Addon: <strong>Active (Multi-Form Enabled)</strong></span>
+        `;
+        document.getElementById('module-indicator').className = "px-2.5 py-1 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-medium flex items-center gap-1.5";
+
+        setScreen('templates');
+      }, 700);
+    }
+
+    function resetAll() {
+      isModuleActive = false;
+      document.getElementById('module-indicator').innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        <span>Addon: <strong>Inactive (Single Form)</strong></span>
+      `;
+      document.getElementById('module-indicator').className = "px-2.5 py-1 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium flex items-center gap-1.5";
+      
+      selectApproach(activeApproach);
+    }
+
+    // Initialize with Approach 1
+    selectApproach(1);
+  </script>
+</body>
+</html>
