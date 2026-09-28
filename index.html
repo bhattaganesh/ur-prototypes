@@ -42,9 +42,9 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="font-bold text-slate-900 text-sm">All 5 Multiple Registration Discovery Approaches</h1>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Menu Order Corrected</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Contextual Submenu Active</span>
         </div>
-        <p class="text-[11px] text-slate-500">Fixed: <strong>+ Add New</strong> is placed below <strong>Login Form</strong> matching real WordPress hook priorities.</p>
+        <p class="text-[11px] text-slate-500"><strong>+ Add New [Addon]</strong> is dynamically placed right below the currently active menu (Registration Form or Login Form).</p>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
         Approach 1 Active
       </span>
       <div id="spec-desc" class="text-indigo-100 text-xs">
-        <strong>Correct Submenu Order:</strong> <code>Registration Form</code> &rarr; <code>Login Form</code> &rarr; <code>+ Add New [Addon]</code> (priority 8 hook order).
+        <strong>Context-Aware Submenu:</strong> <code>+ Add New [Addon]</code> is positioned directly under whichever form you are viewing (Under <em>Registration Form</em> when editing registration, or under <em>Login Form</em> when editing login).
       </div>
     </div>
     <div class="text-[11px] text-indigo-300 font-mono">
@@ -133,34 +133,48 @@
             </div>
           </div>
           
-          <!-- Submenu List (ORDER: Registration Form -> Login Form -> + Add New) -->
-          <div class="bg-[#101517] py-1 text-[11px] space-y-0.5">
-            
+          <!-- Submenu List (Context-aware: + Add New appears directly below the active form type) -->
+          <div id="sidebar-submenus" class="bg-[#101517] py-1 text-[11px] space-y-0.5">
             <!-- 1. Registration Form -->
             <a href="javascript:void(0)" onclick="setScreen('reg')" id="sidebar-item-reg" class="block px-4 py-1.5 text-white font-semibold bg-[#1d2327]">
               Registration Form
             </a>
+
+            <!-- + Add New placeholder when Registration is active -->
+            <div id="addnew-reg-slot">
+              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center justify-between px-4 py-1.5 pl-6 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
+                <span class="flex items-center gap-1.5">
+                  <span class="text-amber-400 font-mono text-xs">+</span>
+                  <span>Add New</span>
+                </span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
+                  Addon
+                </span>
+              </a>
+            </div>
 
             <!-- 2. Login Form -->
             <a href="javascript:void(0)" onclick="setScreen('login')" id="sidebar-item-login" class="block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40">
               Login Form
             </a>
 
-            <!-- 3. + Add New (CORRECTLY POSITIONED BELOW LOGIN FORM!) -->
-            <a href="javascript:void(0)" onclick="openModalForApproach(1)" id="sidebar-item-addnew" class="flex items-center justify-between px-4 py-1.5 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
-              <span class="flex items-center gap-1.5">
-                <span class="text-amber-400 font-mono text-xs">+</span>
-                <span>Add New</span>
-              </span>
-              <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
-                Addon
-              </span>
-            </a>
+            <!-- + Add New placeholder when Login is active -->
+            <div id="addnew-login-slot" class="hidden">
+              <a href="javascript:void(0)" onclick="openModalForApproach(1)" class="sidebar-item-addnew flex items-center justify-between px-4 py-1.5 pl-6 text-amber-300 hover:text-amber-200 hover:bg-slate-800/80 font-semibold transition cursor-pointer ring-1 ring-amber-400/50 bg-amber-950/20">
+                <span class="flex items-center gap-1.5">
+                  <span class="text-amber-400 font-mono text-xs">+</span>
+                  <span>Add New</span>
+                </span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono">
+                  Addon
+                </span>
+              </a>
+            </div>
 
-            <!-- 4. Settings -->
+            <!-- 3. Settings -->
             <div class="px-4 py-1.5 hover:text-[#72aee6] cursor-pointer text-slate-400">Settings</div>
             
-            <!-- 5. Addons -->
+            <!-- 4. Addons -->
             <div class="px-4 py-1.5 hover:text-[#72aee6] cursor-pointer text-slate-400">Addons</div>
           </div>
         </div>
@@ -601,18 +615,25 @@
       screenGate.classList.add('hidden');
       screenTemplates.classList.add('hidden');
 
+      const slotReg = document.getElementById('addnew-reg-slot');
+      const slotLogin = document.getElementById('addnew-login-slot');
+
       if (screen === 'reg') {
         screenReg.classList.remove('hidden');
         toggleReg.className = "px-2.5 py-1 rounded font-medium bg-white text-slate-800 shadow-xs";
         toggleLogin.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
         navReg.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
         navLogin.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
+        if (slotReg) slotReg.classList.remove('hidden');
+        if (slotLogin) slotLogin.classList.add('hidden');
       } else if (screen === 'login') {
         screenLogin.classList.remove('hidden');
         toggleLogin.className = "px-2.5 py-1 rounded font-medium bg-white text-slate-800 shadow-xs";
         toggleReg.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
         navLogin.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
         navReg.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
+        if (slotLogin) slotLogin.classList.remove('hidden');
+        if (slotReg) slotReg.classList.add('hidden');
       } else if (screen === 'gate') {
         screenGate.classList.remove('hidden');
       } else if (screen === 'templates') {
