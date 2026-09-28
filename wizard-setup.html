@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URM Onboarding Wizard Prototype — Issue #1643</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .brand-purple { color: #475BB2; }
+    .bg-brand-purple { background-color: #475BB2; }
+    .border-brand-purple { border-color: #475BB2; }
+    .hover-bg-brand:hover { background-color: #38488e; }
+  </style>
+</head>
+<body class="bg-[#F8F8FA] min-h-screen text-slate-800 p-4 md:p-8 flex flex-col items-center justify-start antialiased">
+
+  <!-- Proposal Context Banner for Team Review -->
+  <div class="w-full max-w-2xl mb-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+    <div>
+      <div class="flex items-center gap-1.5 font-bold text-slate-900">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Issue #1643: Setup Wizard UI Prototype
+      </div>
+      <p class="text-slate-500 mt-0.5">Proposed resolution: Consolidate to <strong>Membership</strong> and <strong>Standard Registration</strong></p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="setTrack('membership')" id="btn-mem" class="px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs">
+        Membership
+      </button>
+      <button onclick="setTrack('standard')" id="btn-std" class="px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">
+        Standard Registration
+      </button>
+    </div>
+  </div>
+
+  <!-- Wizard Card (Exact URM Chakra UI Proportions & Colors) -->
+  <div class="w-full max-w-2xl bg-white rounded-lg border border-[#EAECF0] shadow-sm p-6 sm:p-10 space-y-8">
+    
+    <!-- Stepper Navigation -->
+    <div class="flex items-center justify-between border-b border-slate-100 pb-6">
+      
+      <!-- Step 1: Welcome -->
+      <div class="flex items-center gap-2.5">
+        <div id="step-1-circle" class="w-7 h-7 rounded-full bg-[#475BB2] text-white flex items-center justify-center text-xs font-semibold">
+          1
+        </div>
+        <span class="text-xs font-bold text-slate-900">Welcome</span>
+      </div>
+
+      <div class="h-0.5 flex-1 mx-3 bg-slate-200"></div>
+
+      <!-- Step 2: Dynamic (Membership or Settings) -->
+      <div class="flex items-center gap-2.5">
+        <div id="step-2-circle" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs font-semibold">
+          2
+        </div>
+        <span id="step-2-label" class="text-xs font-medium text-slate-500">Membership</span>
+      </div>
+
+      <!-- Step 3: Payment (Dynamically hidden if Standard Registration) -->
+      <div id="step-3-container" class="contents">
+        <div class="h-0.5 flex-1 mx-3 bg-slate-200"></div>
+        <div class="flex items-center gap-2.5">
+          <div id="step-3-circle" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs font-semibold">
+            3
+          </div>
+          <span class="text-xs font-medium text-slate-500">Payment</span>
+        </div>
+      </div>
+
+      <div class="h-0.5 flex-1 mx-3 bg-slate-200"></div>
+
+      <!-- Step 4/3: Finish -->
+      <div class="flex items-center gap-2.5">
+        <div id="step-last-circle" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs font-semibold">
+          4
+        </div>
+        <span class="text-xs font-medium text-slate-500">Finish</span>
+      </div>
+
+    </div>
+
+    <!-- Step 1 Screen View -->
+    <div id="screen-step-1" class="space-y-7">
+      
+      <!-- Welcome Heading -->
+      <div class="space-y-1">
+        <h2 class="text-[21px] font-semibold text-slate-900 tracking-[-0.01em]">Welcome 🙂</h2>
+        <p class="text-[14px] font-medium text-slate-800">Thanks for choosing URM!</p>
+        <p class="text-[14px] text-slate-500 leading-relaxed">
+          Tell us what you want to do. We'll set up the right pages and features for your site. Don't worry—you can change this anytime.
+        </p>
+      </div>
+
+      <!-- Choose your setup -->
+      <div class="space-y-4">
+        <label class="block text-[15px] font-bold text-slate-900">Choose your setup:</label>
+
+        <!-- Option 1: Membership (Selected by default) -->
+        <div onclick="setTrack('membership')" id="card-membership"
+             class="cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <!-- Custom Radio -->
+            <div class="mt-0.5">
+              <div id="radio-out-mem" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
+                <div id="radio-in-mem" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-1 flex-1">
+              <div class="text-[14px] font-semibold text-slate-900 leading-5">
+                Membership
+              </div>
+              <div class="text-[13px] text-slate-600 leading-[22px]">
+                Set up a membership site with tiered plans (free or paid), pricing tables, and member-only content access.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: Standard Registration -->
+        <div onclick="setTrack('standard')" id="card-standard"
+             class="cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <!-- Custom Radio -->
+            <div class="mt-0.5">
+              <div id="radio-out-std" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                <div id="radio-in-std" class="w-2 h-2 rounded-full bg-transparent"></div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-1 flex-1">
+              <div class="text-[14px] font-semibold text-slate-900 leading-5">
+                Standard Registration
+              </div>
+              <div class="text-[13px] text-slate-600 leading-[22px]">
+                Set up custom registration and login forms to replace WordPress's default signup, with user profiles and account pages.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tracking & Email Checkbox -->
+      <div class="pt-2 border-t border-slate-100 flex items-start gap-2.5">
+        <input type="checkbox" checked class="mt-0.5 h-4 w-4 text-[#475BB2] rounded border-slate-300 focus:ring-[#475BB2]">
+        <div class="text-[13px] text-slate-500 leading-snug">
+          Share anonymous usage data to improve URM, plus receive updates and offers.
+          <div class="mt-1 text-slate-600">
+            Email: <span class="text-[#475BB2] font-medium">admin@masteriiyo.local</span> · <a href="#" class="underline hover:text-slate-900">Change</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+        <button class="text-[13px] text-slate-500 hover:text-slate-800 font-medium">
+          Skip Setup Wizard
+        </button>
+        <button onclick="goToStep2()" class="px-6 py-2.5 rounded bg-[#475BB2] hover-bg-brand text-white text-[13px] font-semibold shadow-xs flex items-center gap-2 transition-all">
+          Next Step
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Step 2 Simulation Screen -->
+    <div id="screen-step-2" class="hidden space-y-6">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <span class="text-xs font-bold text-[#475BB2] uppercase tracking-wider">Dynamic Router Simulation</span>
+          <h3 id="step-2-title" class="text-base font-bold text-slate-900">Step 2 Preview</h3>
+        </div>
+        <button onclick="backToStep1()" class="text-xs text-slate-600 hover:text-slate-900 bg-slate-100 px-3 py-1.5 rounded">
+          ← Back to Step 1
+        </button>
+      </div>
+
+      <div id="step-2-mem-box" class="space-y-3">
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600 leading-relaxed">
+          <strong class="text-slate-800 text-sm">Path: Membership</strong><br><br>
+          In Step 2, the user creates their <strong>Membership Plans</strong> (free vs paid, one-time vs recurring subscription, content access rules).<br><br>
+          • If a paid plan exists, the wizard continues to <strong>Step 3 (Payment Gateways)</strong>.<br>
+          • If all plans are free, the wizard automatically skips Payment and finishes.<br>
+          <em>Total wizard steps: 4</em>
+        </div>
+      </div>
+
+      <div id="step-2-std-box" class="hidden space-y-3">
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600 leading-relaxed">
+          <strong class="text-slate-800 text-sm">Path: Standard Registration</strong><br><br>
+          In Step 2, the user configures <strong>Registration Settings</strong> (Login options and Default User Role).<br><br>
+          • Membership plans and payment gateways are completely bypassed.<br>
+          • Next step goes straight to <strong>Finish</strong>.<br>
+          <em>Total wizard steps: 3</em>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Explanatory Card -->
+  <div class="w-full max-w-2xl mt-4 p-4 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 space-y-2 shadow-xs">
+    <div class="font-bold text-slate-800">Why this approach works:</div>
+    <ul class="list-disc list-inside space-y-1">
+      <li><strong>No Paid vs Free confusion:</strong> Membership is treated as a unified system. Free or paid decisions happen where they belong (Step 2 Plan Builder).</li>
+      <li><strong>No "Advanced Registration" misnomer:</strong> "Standard Registration" clearly communicates plain registration forms and profiles.</li>
+      <li><strong>100% backward compatible:</strong> Maps directly to existing REST API enum values (<code>paid_membership</code> and <code>normal</code>).</li>
+    </ul>
+  </div>
+
+  <script>
+    let selected = 'membership';
+
+    function setTrack(type) {
+      selected = type;
+      const cardMem = document.getElementById('card-membership');
+      const cardStd = document.getElementById('card-standard');
+      const rOutMem = document.getElementById('radio-out-mem');
+      const rInMem = document.getElementById('radio-in-mem');
+      const rOutStd = document.getElementById('radio-out-std');
+      const rInStd = document.getElementById('radio-in-std');
+
+      const step2Label = document.getElementById('step-2-label');
+      const step3Container = document.getElementById('step-3-container');
+      const stepLastCircle = document.getElementById('step-last-circle');
+
+      const btnMem = document.getElementById('btn-mem');
+      const btnStd = document.getElementById('btn-std');
+
+      if (type === 'membership') {
+        cardMem.className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
+        cardStd.className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+
+        rOutMem.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        rInMem.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+
+        rOutStd.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        rInStd.className = 'w-2 h-2 rounded-full bg-transparent';
+
+        step2Label.innerText = 'Membership';
+        step3Container.style.display = 'contents';
+        stepLastCircle.innerText = '4';
+
+        btnMem.className = 'px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs';
+        btnStd.className = 'px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all';
+      } else {
+        cardStd.className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
+        cardMem.className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+
+        rOutStd.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        rInStd.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+
+        rOutMem.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        rInMem.className = 'w-2 h-2 rounded-full bg-transparent';
+
+        step2Label.innerText = 'Settings';
+        step3Container.style.display = 'none';
+        stepLastCircle.innerText = '3';
+
+        btnStd.className = 'px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs';
+        btnMem.className = 'px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all';
+      }
+    }
+
+    function goToStep2() {
+      document.getElementById('screen-step-1').classList.add('hidden');
+      document.getElementById('screen-step-2').classList.remove('hidden');
+
+      document.getElementById('step-1-circle').className = 'w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-semibold';
+      document.getElementById('step-1-circle').innerHTML = '✓';
+      document.getElementById('step-2-circle').className = 'w-7 h-7 rounded-full bg-[#475BB2] text-white flex items-center justify-center text-xs font-semibold';
+
+      if (selected === 'membership') {
+        document.getElementById('step-2-title').innerText = 'Step 2: Membership Plans & Access Rules';
+        document.getElementById('step-2-mem-box').classList.remove('hidden');
+        document.getElementById('step-2-std-box').classList.add('hidden');
+      } else {
+        document.getElementById('step-2-title').innerText = 'Step 2: Registration & Account Settings';
+        document.getElementById('step-2-mem-box').classList.add('hidden');
+        document.getElementById('step-2-std-box').classList.remove('hidden');
+      }
+    }
+
+    function backToStep1() {
+      document.getElementById('screen-step-2').classList.add('hidden');
+      document.getElementById('screen-step-1').classList.remove('hidden');
+
+      document.getElementById('step-1-circle').className = 'w-7 h-7 rounded-full bg-[#475BB2] text-white flex items-center justify-center text-xs font-semibold';
+      document.getElementById('step-1-circle').innerHTML = '1';
+      document.getElementById('step-2-circle').className = 'w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs font-semibold';
+    }
+  </script>
+</body>
+</html>
