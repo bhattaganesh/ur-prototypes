@@ -562,13 +562,15 @@
       document.getElementById('spec-desc').innerHTML = specs[num].desc;
 
       // Visibility toggles
-      const sidebarAddNew = document.getElementById('sidebar-item-addnew');
+      const slotReg = document.getElementById('addnew-reg-slot');
+      const slotLogin = document.getElementById('addnew-login-slot');
       const headerAddNewBtn = document.getElementById('approach-2-btn');
       const helpWidget = document.getElementById('approach-3-wrapper');
       const banner = document.getElementById('approach-4-banner');
       const screenToggleBox = document.getElementById('screen-toggle-box');
 
-      sidebarAddNew.classList.add('hidden');
+      if (slotReg) slotReg.classList.add('hidden');
+      if (slotLogin) slotLogin.classList.add('hidden');
       headerAddNewBtn.classList.add('hidden');
       headerAddNewBtn.classList.remove('flex');
       helpWidget.classList.add('hidden');
@@ -576,8 +578,6 @@
       screenToggleBox.classList.remove('hidden');
 
       if (num === 1) {
-        sidebarAddNew.classList.remove('hidden');
-        sidebarAddNew.classList.add('flex');
         setScreen(currentScreen === 'gate' ? 'reg' : currentScreen);
       } else if (num === 2) {
         headerAddNewBtn.classList.remove('hidden');
@@ -624,7 +624,7 @@
         toggleLogin.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
         navReg.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
         navLogin.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
-        if (slotReg) slotReg.classList.remove('hidden');
+        if (activeApproach === 1 && slotReg) slotReg.classList.remove('hidden');
         if (slotLogin) slotLogin.classList.add('hidden');
       } else if (screen === 'login') {
         screenLogin.classList.remove('hidden');
@@ -632,7 +632,7 @@
         toggleReg.className = "px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900";
         navLogin.className = "block px-4 py-1.5 text-white font-semibold bg-[#1d2327]";
         navReg.className = "block px-4 py-1.5 text-slate-300 hover:text-white hover:bg-slate-800/40";
-        if (slotLogin) slotLogin.classList.remove('hidden');
+        if (activeApproach === 1 && slotLogin) slotLogin.classList.remove('hidden');
         if (slotReg) slotReg.classList.add('hidden');
       } else if (screen === 'gate') {
         screenGate.classList.remove('hidden');
