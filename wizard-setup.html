@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URM Onboarding Wizard Prototype — Issue #1643</title>
+  <title>URM Setup Wizard Prototype — 3 UI/UX Variations (Issue #1643)</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,26 +18,29 @@
 </head>
 <body class="bg-[#F8F8FA] min-h-screen text-slate-800 p-4 md:p-8 flex flex-col items-center justify-start antialiased">
 
-  <!-- Proposal Context Banner for Team Review -->
-  <div class="w-full max-w-2xl mb-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+  <!-- Top Controller / Variation Switcher -->
+  <div class="w-full max-w-2xl mb-4 bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
     <div>
       <div class="flex items-center gap-1.5 font-bold text-slate-900">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        Issue #1643: Setup Wizard UI Prototype
+        Issue #1643: 3 UI/UX Prototype Variations
       </div>
-      <p class="text-slate-500 mt-0.5">Proposed resolution: Consolidate to <strong>Membership</strong> and <strong>Standard Registration</strong></p>
+      <p class="text-slate-500 mt-0.5">Toggle between 3 expert design approaches below:</p>
     </div>
-    <div class="flex items-center gap-2">
-      <button onclick="setTrack('membership')" id="btn-mem" class="px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs">
-        Membership
+    <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-lg">
+      <button onclick="setVariation(1)" id="btn-var-1" class="px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all">
+        V1: Clean Minimal
       </button>
-      <button onclick="setTrack('standard')" id="btn-std" class="px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">
-        Standard Registration
+      <button onclick="setVariation(2)" id="btn-var-2" class="px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
+        V2: Feature Pills
+      </button>
+      <button onclick="setVariation(3)" id="btn-var-3" class="px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
+        V3: Visual Grid
       </button>
     </div>
   </div>
 
-  <!-- Wizard Card (Exact URM Chakra UI Proportions & Colors) -->
+  <!-- Wizard Card (Exact URM Layout & Proportions) -->
   <div class="w-full max-w-2xl bg-white rounded-lg border border-[#EAECF0] shadow-sm p-6 sm:p-10 space-y-8">
     
     <!-- Stepper Navigation -->
@@ -61,7 +64,7 @@
         <span id="step-2-label" class="text-xs font-medium text-slate-500">Membership</span>
       </div>
 
-      <!-- Step 3: Payment (Dynamically hidden if Standard Registration) -->
+      <!-- Step 3: Payment (Auto-hidden if Standard Registration) -->
       <div id="step-3-container" class="contents">
         <div class="h-0.5 flex-1 mx-3 bg-slate-200"></div>
         <div class="flex items-center gap-2.5">
@@ -96,22 +99,19 @@
         </p>
       </div>
 
-      <!-- Choose your setup -->
-      <div class="space-y-4">
+      <!-- ================= VARIATION 1: CLEAN MINIMAL ================= -->
+      <div id="var-1-container" class="space-y-4">
         <label class="block text-[15px] font-bold text-slate-900">Choose your setup:</label>
 
-        <!-- Option 1: Membership (Selected by default) -->
-        <div onclick="setTrack('membership')" id="card-membership"
+        <!-- Option 1: Membership -->
+        <div onclick="selectTrack('membership')" id="v1-card-mem"
              class="cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200">
           <div class="flex items-start gap-3.5">
-            <!-- Custom Radio -->
             <div class="mt-0.5">
-              <div id="radio-out-mem" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
-                <div id="radio-in-mem" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
+              <div id="v1-radio-out-mem" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
+                <div id="v1-radio-in-mem" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
               </div>
             </div>
-
-            <!-- Content -->
             <div class="space-y-1 flex-1">
               <div class="text-[14px] font-semibold text-slate-900 leading-5">
                 Membership
@@ -124,17 +124,14 @@
         </div>
 
         <!-- Option 2: Standard Registration -->
-        <div onclick="setTrack('standard')" id="card-standard"
+        <div onclick="selectTrack('standard')" id="v1-card-std"
              class="cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200">
           <div class="flex items-start gap-3.5">
-            <!-- Custom Radio -->
             <div class="mt-0.5">
-              <div id="radio-out-std" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
-                <div id="radio-in-std" class="w-2 h-2 rounded-full bg-transparent"></div>
+              <div id="v1-radio-out-std" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                <div id="v1-radio-in-std" class="w-2 h-2 rounded-full bg-transparent"></div>
               </div>
             </div>
-
-            <!-- Content -->
             <div class="space-y-1 flex-1">
               <div class="text-[14px] font-semibold text-slate-900 leading-5">
                 Standard Registration
@@ -145,7 +142,124 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- ================= VARIATION 2: FEATURE PILLS & BADGES ================= -->
+      <div id="var-2-container" class="hidden space-y-4">
+        <label class="block text-[15px] font-bold text-slate-900">Choose your setup:</label>
+
+        <!-- Option 1: Membership -->
+        <div onclick="selectTrack('membership')" id="v2-card-mem"
+             class="cursor-pointer rounded-lg border-2 border-[#475BB2] bg-[#F9FAFD] p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <div class="mt-0.5">
+              <div id="v2-radio-out-mem" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
+                <div id="v2-radio-in-mem" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
+              </div>
+            </div>
+            <div class="space-y-1.5 flex-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[15px] font-bold text-slate-900">Membership</span>
+                <span class="text-[11px] font-semibold bg-[#EBF0FF] text-[#475BB2] px-2.5 py-0.5 rounded-full">All-in-One</span>
+              </div>
+              <p class="text-[13px] text-slate-600 leading-[21px]">
+                Set up a membership site with free or paid plans, and member-only content access.
+              </p>
+              <div class="pt-1.5 flex flex-wrap gap-1.5 text-[11px]">
+                <span class="bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium shadow-[0_1px_2px_rgba(0,0,0,0.02)]">✓ Content Protection</span>
+                <span class="bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium shadow-[0_1px_2px_rgba(0,0,0,0.02)]">✓ Free & Paid Plans</span>
+                <span class="bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium shadow-[0_1px_2px_rgba(0,0,0,0.02)]">✓ Pricing Table</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: Standard Registration -->
+        <div onclick="selectTrack('standard')" id="v2-card-std"
+             class="cursor-pointer rounded-lg border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <div class="mt-0.5">
+              <div id="v2-radio-out-std" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                <div id="v2-radio-in-std" class="w-2 h-2 rounded-full bg-transparent"></div>
+              </div>
+            </div>
+            <div class="space-y-1.5 flex-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[15px] font-bold text-slate-900">Standard Registration</span>
+                <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">Forms & Profiles</span>
+              </div>
+              <p class="text-[13px] text-slate-600 leading-[21px]">
+                Set up custom registration and login forms to replace WordPress's default signup, with user profiles and account pages.
+              </p>
+              <div class="pt-1.5 flex flex-wrap gap-1.5 text-[11px]">
+                <span class="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium">✓ Form Builder</span>
+                <span class="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium">✓ User Approvals</span>
+                <span class="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium">✓ Frontend Account</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VARIATION 3: SIDE-BY-SIDE VISUAL GRID ================= -->
+      <div id="var-3-container" class="hidden space-y-4">
+        <label class="block text-[15px] font-bold text-slate-900">Choose your setup:</label>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <!-- Card 1: Membership -->
+          <div onclick="selectTrack('membership')" id="v3-card-mem"
+               class="cursor-pointer rounded-xl border-2 border-[#475BB2] bg-[#F9FAFD] p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-xs relative">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-lg bg-[#EBF0FF] flex items-center justify-center text-[#475BB2]">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div id="v3-radio-out-mem" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
+                  <div id="v3-radio-in-mem" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
+                </div>
+              </div>
+              <div>
+                <h4 class="text-[15px] font-bold text-slate-900">Membership</h4>
+                <p class="text-[12px] text-slate-600 leading-relaxed mt-1">
+                  Set up a membership site with free or paid plans, and member-only content access.
+                </p>
+              </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-200/60 text-[11px] text-slate-500 font-medium">
+              Best for: Paid communities, courses, & premium content
+            </div>
+          </div>
+
+          <!-- Card 2: Standard Registration -->
+          <div onclick="selectTrack('standard')" id="v3-card-std"
+               class="cursor-pointer rounded-xl border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-5 flex flex-col justify-between transition-all duration-200 relative">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <div id="v3-radio-out-std" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                  <div id="v3-radio-in-std" class="w-2 h-2 rounded-full bg-transparent"></div>
+                </div>
+              </div>
+              <div>
+                <h4 class="text-[15px] font-bold text-slate-900">Standard Registration</h4>
+                <p class="text-[12px] text-slate-600 leading-relaxed mt-1">
+                  Set up custom registration and login forms to replace WordPress's default signup, with user profiles and account pages.
+                </p>
+              </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 text-[11px] text-slate-500 font-medium">
+              Best for: Custom signups, directories, & user portals
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reassurance Microcopy -->
+      <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+        <svg class="w-4 h-4 text-[#475BB2] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Don't worry—you can create membership plans or edit forms anytime later from your dashboard.</span>
       </div>
 
       <!-- Tracking & Email Checkbox -->
@@ -159,13 +273,13 @@
         </div>
       </div>
 
-      <!-- Navigation Actions -->
+      <!-- Navigation Actions with Context-Aware Button -->
       <div class="flex items-center justify-between pt-4 border-t border-slate-100">
         <button class="text-[13px] text-slate-500 hover:text-slate-800 font-medium">
           Skip Setup Wizard
         </button>
-        <button onclick="goToStep2()" class="px-6 py-2.5 rounded bg-[#475BB2] hover-bg-brand text-white text-[13px] font-semibold shadow-xs flex items-center gap-2 transition-all">
-          Next Step
+        <button onclick="goToStep2()" id="next-action-btn" class="px-6 py-2.5 rounded bg-[#475BB2] hover-bg-brand text-white text-[13px] font-semibold shadow-xs flex items-center gap-2 transition-all">
+          <span id="next-btn-text">Next: Create Plans</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
@@ -207,67 +321,114 @@
 
   </div>
 
-  <!-- Bottom Explanatory Card -->
-  <div class="w-full max-w-2xl mt-4 p-4 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 space-y-2 shadow-xs">
-    <div class="font-bold text-slate-800">Why this approach works:</div>
-    <ul class="list-disc list-inside space-y-1">
-      <li><strong>No Paid vs Free confusion:</strong> Membership is treated as a unified system. Free or paid decisions happen where they belong (Step 2 Plan Builder).</li>
-      <li><strong>No "Advanced Registration" misnomer:</strong> "Standard Registration" clearly communicates plain registration forms and profiles.</li>
-      <li><strong>100% backward compatible:</strong> Maps directly to existing REST API enum values (<code>paid_membership</code> and <code>normal</code>).</li>
-    </ul>
+  <!-- Summary of the 3 Variations -->
+  <div class="w-full max-w-2xl mt-4 p-5 bg-white rounded-lg border border-slate-200 text-xs text-slate-600 space-y-3 shadow-xs">
+    <div class="font-bold text-slate-800 text-sm">UI/UX Variations Overview:</div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="p-3 bg-slate-50 rounded border border-slate-200 space-y-1">
+        <strong class="text-slate-900">V1: Clean Minimal</strong>
+        <p class="text-[11px] text-slate-500">Traditional radio rows with zero clutter. Focused purely on the text.</p>
+      </div>
+      <div class="p-3 bg-slate-50 rounded border border-slate-200 space-y-1">
+        <strong class="text-slate-900">V2: Feature Pills</strong>
+        <p class="text-[11px] text-slate-500">Adds micro feature tags (`✓ Content Protection`) for instant scanning.</p>
+      </div>
+      <div class="p-3 bg-slate-50 rounded border border-slate-200 space-y-1">
+        <strong class="text-slate-900">V3: Visual Grid</strong>
+        <p class="text-[11px] text-slate-500">2-column hero cards with icons & "Best for:" footer for high engagement.</p>
+      </div>
+    </div>
   </div>
 
   <script>
-    let selected = 'membership';
+    let currentTrack = 'membership';
+    let currentVar = 1;
 
-    function setTrack(type) {
-      selected = type;
-      const cardMem = document.getElementById('card-membership');
-      const cardStd = document.getElementById('card-standard');
-      const rOutMem = document.getElementById('radio-out-mem');
-      const rInMem = document.getElementById('radio-in-mem');
-      const rOutStd = document.getElementById('radio-out-std');
-      const rInStd = document.getElementById('radio-in-std');
+    function setVariation(num) {
+      currentVar = num;
+      document.getElementById('var-1-container').classList.add('hidden');
+      document.getElementById('var-2-container').classList.add('hidden');
+      document.getElementById('var-3-container').classList.add('hidden');
 
+      document.getElementById('btn-var-1').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
+      document.getElementById('btn-var-2').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
+      document.getElementById('btn-var-3').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
+
+      document.getElementById(`var-${num}-container`).classList.remove('hidden');
+      document.getElementById(`btn-var-${num}`).className = 'px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all';
+
+      updateCardStyles();
+    }
+
+    function selectTrack(track) {
+      currentTrack = track;
+      updateCardStyles();
+    }
+
+    function updateCardStyles() {
       const step2Label = document.getElementById('step-2-label');
       const step3Container = document.getElementById('step-3-container');
       const stepLastCircle = document.getElementById('step-last-circle');
+      const nextBtnText = document.getElementById('next-btn-text');
 
-      const btnMem = document.getElementById('btn-mem');
-      const btnStd = document.getElementById('btn-std');
-
-      if (type === 'membership') {
-        cardMem.className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        cardStd.className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-
-        rOutMem.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        rInMem.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-
-        rOutStd.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        rInStd.className = 'w-2 h-2 rounded-full bg-transparent';
-
+      if (currentTrack === 'membership') {
         step2Label.innerText = 'Membership';
         step3Container.style.display = 'contents';
         stepLastCircle.innerText = '4';
+        nextBtnText.innerText = 'Next: Create Plans';
 
-        btnMem.className = 'px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs';
-        btnStd.className = 'px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all';
+        // V1
+        document.getElementById('v1-card-mem').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
+        document.getElementById('v1-card-std').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+        document.getElementById('v1-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v1-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v1-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v1-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
+
+        // V2
+        document.getElementById('v2-card-mem').className = 'cursor-pointer rounded-lg border-2 border-[#475BB2] bg-[#F9FAFD] p-4 transition-all duration-200';
+        document.getElementById('v2-card-std').className = 'cursor-pointer rounded-lg border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+        document.getElementById('v2-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v2-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v2-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v2-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
+
+        // V3
+        document.getElementById('v3-card-mem').className = 'cursor-pointer rounded-xl border-2 border-[#475BB2] bg-[#F9FAFD] p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-xs relative';
+        document.getElementById('v3-card-std').className = 'cursor-pointer rounded-xl border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
+        document.getElementById('v3-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v3-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v3-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v3-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
       } else {
-        cardStd.className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        cardMem.className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-
-        rOutStd.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        rInStd.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-
-        rOutMem.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        rInMem.className = 'w-2 h-2 rounded-full bg-transparent';
-
         step2Label.innerText = 'Settings';
         step3Container.style.display = 'none';
         stepLastCircle.innerText = '3';
+        nextBtnText.innerText = 'Next: Account Settings';
 
-        btnStd.className = 'px-3 py-1.5 rounded font-semibold bg-[#475BB2] text-white transition-all shadow-xs';
-        btnMem.className = 'px-3 py-1.5 rounded font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all';
+        // V1
+        document.getElementById('v1-card-std').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
+        document.getElementById('v1-card-mem').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+        document.getElementById('v1-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v1-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v1-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v1-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
+
+        // V2
+        document.getElementById('v2-card-std').className = 'cursor-pointer rounded-lg border-2 border-[#475BB2] bg-[#F9FAFD] p-4 transition-all duration-200';
+        document.getElementById('v2-card-mem').className = 'cursor-pointer rounded-lg border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+        document.getElementById('v2-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v2-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v2-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v2-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
+
+        // V3
+        document.getElementById('v3-card-std').className = 'cursor-pointer rounded-xl border-2 border-[#475BB2] bg-[#F9FAFD] p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-xs relative';
+        document.getElementById('v3-card-mem').className = 'cursor-pointer rounded-xl border-2 border-[#E5E7EB] hover:border-slate-300 bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
+        document.getElementById('v3-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+        document.getElementById('v3-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        document.getElementById('v3-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+        document.getElementById('v3-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
       }
     }
 
@@ -279,7 +440,7 @@
       document.getElementById('step-1-circle').innerHTML = '✓';
       document.getElementById('step-2-circle').className = 'w-7 h-7 rounded-full bg-[#475BB2] text-white flex items-center justify-center text-xs font-semibold';
 
-      if (selected === 'membership') {
+      if (currentTrack === 'membership') {
         document.getElementById('step-2-title').innerText = 'Step 2: Membership Plans & Access Rules';
         document.getElementById('step-2-mem-box').classList.remove('hidden');
         document.getElementById('step-2-std-box').classList.add('hidden');
