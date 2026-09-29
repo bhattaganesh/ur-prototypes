@@ -23,25 +23,28 @@
     <div>
       <div class="flex items-center gap-1.5 font-bold text-slate-900">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        Issue #1643: Setup Wizard UI Prototype
+        Issue #1643: Setup Wizard Prototype
       </div>
-      <p class="text-slate-500 mt-0.5">Toggle between 3 design styles:</p>
+      <p class="text-slate-500 mt-0.5">Toggle flow & design styles:</p>
     </div>
     <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-lg">
-      <button onclick="setVariation(1)" id="btn-var-1" class="px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all">
-        V1: Clean Minimal
+      <button onclick="setVariation('final')" id="btn-var-final" class="px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all">
+        ★ Agreed: 1-Question Flow
       </button>
-      <button onclick="setVariation(2)" id="btn-var-2" class="px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
-        V2: Scope & Purpose
-      </button>
-      <button onclick="setVariation(3)" id="btn-var-3" class="px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
+      <button onclick="setVariation(3)" id="btn-var-3" class="px-2.5 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
         V3: Visual Grid
+      </button>
+      <button onclick="setVariation(2)" id="btn-var-2" class="px-2.5 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
+        V2: Scope
+      </button>
+      <button onclick="setVariation(1)" id="btn-var-1" class="px-2.5 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all">
+        V1: Minimal
       </button>
     </div>
   </div>
 
   <!-- Wizard Card (Exact URM Layout & Proportions) -->
-  <div class="w-full max-w-2xl bg-white rounded-lg border border-[#EAECF0] shadow-sm p-6 sm:p-10 space-y-8">
+  <div id="main-wizard-card" class="w-full max-w-2xl bg-white rounded-lg border border-[#EAECF0] shadow-sm p-6 sm:p-10 space-y-8 transition-colors">
     
     <!-- Stepper Navigation -->
     <div class="flex items-center justify-between border-b border-slate-100 pb-6">
@@ -90,17 +93,81 @@
     <!-- Step 1 Screen View -->
     <div id="screen-step-1" class="space-y-7">
       
-      <!-- Welcome Heading (URM Original Header) -->
-      <div class="space-y-1">
-        <h2 class="text-[21px] font-semibold text-slate-900 tracking-[-0.01em]">Welcome 🙂</h2>
-        <p class="text-[14px] font-medium text-slate-800">Thanks for choosing URM!</p>
-        <p class="text-[14px] text-slate-500 leading-relaxed">
-          Tell us what you want to do. We'll set up the right pages and features for your site. Don't worry - you can change this anytime.
+      <!-- Welcome Heading (Dynamic based on variation) -->
+      <div id="welcome-heading-box" class="space-y-1">
+        <h2 id="heading-title" class="text-[22px] font-semibold text-slate-900 tracking-[-0.01em]">Welcome to User Registration</h2>
+        <p id="heading-subtitle" class="text-[14px] text-slate-500 leading-relaxed">
+          Let's get your site set up. This takes about a minute.
         </p>
       </div>
 
+      <!-- ================= FINAL AGREED APPROACH: 1-QUESTION FLOW ================= -->
+      <div id="var-final-container" class="space-y-4">
+        <label class="block text-[15px] font-bold text-slate-900">Do you want to create memberships?</label>
+
+        <!-- Option 1: Yes -->
+        <div onclick="selectFinalOption('yes')" id="final-card-yes"
+             class="cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <div class="mt-0.5">
+              <div id="final-radio-out-yes" class="w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white">
+                <div id="final-radio-in-yes" class="w-2 h-2 rounded-full bg-[#475BB2]"></div>
+              </div>
+            </div>
+            <div class="space-y-1 flex-1">
+              <div class="text-[14px] font-semibold text-slate-900 leading-5">
+                Yes
+              </div>
+              <div class="text-[13px] text-slate-600 leading-[20px]">
+                Set up free or paid plans, and restrict content to members.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: No -->
+        <div onclick="selectFinalOption('no')" id="final-card-no"
+             class="cursor-pointer rounded border-2 border-[#EAECF0] hover:border-slate-300 bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <div class="mt-0.5">
+              <div id="final-radio-out-no" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                <div id="final-radio-in-no" class="w-2 h-2 rounded-full bg-transparent"></div>
+              </div>
+            </div>
+            <div class="space-y-1 flex-1">
+              <div class="text-[14px] font-semibold text-slate-900 leading-5">
+                No
+              </div>
+              <div class="text-[13px] text-slate-600 leading-[20px]">
+                I only need custom registration and login forms.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 3: Maybe later -->
+        <div onclick="selectFinalOption('later')" id="final-card-later"
+             class="cursor-pointer rounded border-2 border-[#EAECF0] hover:border-slate-300 bg-white p-4 transition-all duration-200">
+          <div class="flex items-start gap-3.5">
+            <div class="mt-0.5">
+              <div id="final-radio-out-later" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white">
+                <div id="final-radio-in-later" class="w-2 h-2 rounded-full bg-transparent"></div>
+              </div>
+            </div>
+            <div class="space-y-1 flex-1">
+              <div class="text-[14px] font-semibold text-slate-900 leading-5">
+                Maybe later
+              </div>
+              <div class="text-[13px] text-slate-600 leading-[20px]">
+                Set up registration for now. You can add memberships anytime.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ================= VARIATION 1: CLEAN MINIMAL ================= -->
-      <div id="var-1-container" class="space-y-4">
+      <div id="var-1-container" class="hidden space-y-4">
         <label class="block text-[15px] font-bold text-slate-900">Choose your setup:</label>
 
         <!-- Option 1: Membership -->
@@ -256,18 +323,18 @@
         <div class="text-[13px] text-slate-500 leading-snug">
           Share anonymous usage data to improve URM, plus receive updates and offers.
           <div class="mt-1 text-slate-600">
-            Email: <span class="text-[#475BB2] font-medium">admin@masteriiyo.local</span> · <a href="#" class="underline hover:text-slate-900">Change</a>
+            Email: <span class="text-[#475BB2] font-medium">temp@example.com</span> · <a href="#" class="underline hover:text-slate-900">Change</a>
           </div>
         </div>
       </div>
 
       <!-- Navigation Actions -->
       <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-        <button class="text-[13px] text-slate-500 hover:text-slate-800 font-medium">
-          Skip Setup Wizard
+        <button id="skip-btn" class="text-[13px] text-slate-500 hover:text-slate-800 font-medium">
+          Skip this step
         </button>
-        <button onclick="goToStep2()" class="px-6 py-2.5 rounded bg-[#475BB2] hover-bg-brand text-white text-[13px] font-semibold shadow-xs flex items-center gap-2 transition-all">
-          Next Step
+        <button onclick="goToStep2()" id="next-btn" class="px-6 py-2.5 rounded bg-[#475BB2] hover-bg-brand text-white text-[13px] font-semibold shadow-xs flex items-center gap-2 transition-all">
+          <span>Next</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
@@ -287,22 +354,24 @@
       </div>
 
       <div id="step-2-mem-box" class="space-y-3">
-        <div class="p-4 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600 leading-relaxed">
-          <strong class="text-slate-800 text-sm">Path: Membership</strong><br><br>
-          In Step 2, the user creates their <strong>Membership Plans</strong> (free vs paid, one-time vs recurring subscription, content access rules).<br><br>
-          • If a paid plan exists, the wizard continues to <strong>Step 3 (Payment Gateways)</strong>.<br>
-          • If all plans are free, the wizard automatically skips Payment and finishes.<br>
+        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-900 leading-relaxed">
+          <strong class="text-emerald-950 text-sm">Path Chosen: Membership (Yes)</strong><br><br>
+          In Step 2, the user configures <strong>Membership Plans & Content Protection</strong>.<br><br>
+          • Step 2: Membership Plans (create free / paid plans, restrict pages/posts)<br>
+          • Step 3: Payment Gateways (Stripe, PayPal, Authorize.net)<br>
+          • Step 4: Finish & Ready<br>
           <em>Total wizard steps: 4</em>
         </div>
       </div>
 
       <div id="step-2-std-box" class="hidden space-y-3">
-        <div class="p-4 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600 leading-relaxed">
-          <strong class="text-slate-800 text-sm">Path: Standard Registration</strong><br><br>
-          In Step 2, the user configures <strong>Registration Settings</strong> (Login options and Default User Role).<br><br>
-          • Membership plans and payment gateways are completely bypassed.<br>
-          • Next step goes straight to <strong>Finish</strong>.<br>
-          <em>Total wizard steps: 3</em>
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded text-xs text-blue-900 leading-relaxed">
+          <strong class="text-blue-950 text-sm">Path Chosen: Standard Registration (No / Maybe later)</strong><br><br>
+          In Step 2, the user configures <strong>Registration & Login Settings</strong>.<br><br>
+          • Step 2: General Registration (user login option, default role, profile settings)<br>
+          • Step 3: Payment step is <strong>completely skipped</strong><br>
+          • Step 3: Finish & Ready<br>
+          <em>Total wizard steps: 3 (Zero membership friction)</em>
         </div>
       </div>
     </div>
@@ -311,30 +380,104 @@
 
   <script>
     let currentTrack = 'membership';
-    let currentVar = 1;
+    let currentFinalOption = 'yes';
+    let currentVar = 'final';
 
-    function setVariation(num) {
-      currentVar = num;
-      document.getElementById('var-1-container').classList.add('hidden');
-      document.getElementById('var-2-container').classList.add('hidden');
-      document.getElementById('var-3-container').classList.add('hidden');
+    function setVariation(val) {
+      currentVar = val;
+      
+      const containers = ['var-final-container', 'var-1-container', 'var-2-container', 'var-3-container'];
+      containers.forEach(id => document.getElementById(id).classList.add('hidden'));
 
-      document.getElementById('btn-var-1').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
-      document.getElementById('btn-var-2').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
-      document.getElementById('btn-var-3').className = 'px-3 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
+      const btns = ['btn-var-final', 'btn-var-1', 'btn-var-2', 'btn-var-3'];
+      btns.forEach(id => {
+        document.getElementById(id).className = 'px-2.5 py-1.5 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition-all';
+      });
 
-      document.getElementById(`var-${num}-container`).classList.remove('hidden');
-      document.getElementById(`btn-var-${num}`).className = 'px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all';
+      const headingTitle = document.getElementById('heading-title');
+      const headingSub = document.getElementById('heading-subtitle');
+      const skipBtn = document.getElementById('skip-btn');
 
-      updateCardStyles();
+      if (val === 'final') {
+        document.getElementById('var-final-container').classList.remove('hidden');
+        document.getElementById('btn-var-final').className = 'px-3 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all';
+        headingTitle.innerText = 'Welcome to User Registration';
+        headingSub.innerText = "Let's get your site set up. This takes about a minute.";
+        skipBtn.innerText = 'Skip this step';
+        selectFinalOption(currentFinalOption);
+      } else {
+        document.getElementById(`var-${val}-container`).classList.remove('hidden');
+        document.getElementById(`btn-var-${val}`).className = 'px-2.5 py-1.5 rounded-md font-semibold bg-[#475BB2] text-white shadow-xs transition-all';
+        headingTitle.innerText = 'Welcome 🙂';
+        headingSub.innerHTML = '<strong>Thanks for choosing URM!</strong><br>Tell us what you want to do. We\'ll set up the right pages and features for your site. Don\'t worry - you can change this anytime.';
+        skipBtn.innerText = 'Skip Setup Wizard';
+        selectTrack(currentTrack);
+      }
+    }
+
+    function selectFinalOption(opt) {
+      currentFinalOption = opt;
+      currentTrack = (opt === 'yes') ? 'membership' : 'standard';
+
+      const options = ['yes', 'no', 'later'];
+      options.forEach(item => {
+        const card = document.getElementById(`final-card-${item}`);
+        const radioOut = document.getElementById(`final-radio-out-${item}`);
+        const radioIn = document.getElementById(`final-radio-in-${item}`);
+
+        if (item === opt) {
+          card.className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
+          radioOut.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+          radioIn.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+        } else {
+          card.className = 'cursor-pointer rounded border-2 border-[#EAECF0] hover:border-slate-300 bg-white p-4 transition-all duration-200';
+          radioOut.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+          radioIn.className = 'w-2 h-2 rounded-full bg-transparent';
+        }
+      });
+
+      updateStepperUI();
     }
 
     function selectTrack(track) {
       currentTrack = track;
-      updateCardStyles();
+
+      // Update V1, V2, V3 styles
+      ['v1', 'v2', 'v3'].forEach(prefix => {
+        const memCard = document.getElementById(`${prefix}-card-mem`);
+        const stdCard = document.getElementById(`${prefix}-card-std`);
+        const memOut = document.getElementById(`${prefix}-radio-out-mem`);
+        const memIn = document.getElementById(`${prefix}-radio-in-mem`);
+        const stdOut = document.getElementById(`${prefix}-radio-out-std`);
+        const stdIn = document.getElementById(`${prefix}-radio-in-std`);
+
+        if (track === 'membership') {
+          memCard.classList.remove('border-[#F4F4F4]', 'border-[#EAECF0]', 'hover:border-slate-300');
+          memCard.classList.add('border-[#475BB2]');
+          stdCard.classList.remove('border-[#475BB2]');
+          stdCard.classList.add('border-[#F4F4F4]', 'hover:border-slate-300');
+
+          memOut.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+          memIn.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+          stdOut.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+          stdIn.className = 'w-2 h-2 rounded-full bg-transparent';
+        } else {
+          stdCard.classList.remove('border-[#F4F4F4]', 'border-[#EAECF0]', 'hover:border-slate-300');
+          stdCard.classList.add('border-[#475BB2]');
+          memCard.classList.remove('border-[#475BB2]');
+          memCard.classList.add('border-[#F4F4F4]', 'hover:border-slate-300');
+
+          stdOut.className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
+          stdIn.className = 'w-2 h-2 rounded-full bg-[#475BB2]';
+          memOut.className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
+          memIn.className = 'w-2 h-2 rounded-full bg-transparent';
+        }
+      });
+
+      updateStepperUI();
     }
 
-    function updateCardStyles() {
+    function updateStepperUI() {
       const step2Label = document.getElementById('step-2-label');
       const step3Container = document.getElementById('step-3-container');
       const stepLastCircle = document.getElementById('step-last-circle');
@@ -343,58 +486,10 @@
         step2Label.innerText = 'Membership';
         step3Container.style.display = 'contents';
         stepLastCircle.innerText = '4';
-
-        // V1
-        document.getElementById('v1-card-mem').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        document.getElementById('v1-card-std').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-        document.getElementById('v1-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v1-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v1-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v1-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
-
-        // V2
-        document.getElementById('v2-card-mem').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        document.getElementById('v2-card-std').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-        document.getElementById('v2-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v2-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v2-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v2-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
-
-        // V3
-        document.getElementById('v3-card-mem').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
-        document.getElementById('v3-card-std').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
-        document.getElementById('v3-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v3-radio-in-mem').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v3-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v3-radio-in-std').className = 'w-2 h-2 rounded-full bg-transparent';
       } else {
         step2Label.innerText = 'Settings';
         step3Container.style.display = 'none';
         stepLastCircle.innerText = '3';
-
-        // V1
-        document.getElementById('v1-card-std').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        document.getElementById('v1-card-mem').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-        document.getElementById('v1-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v1-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v1-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v1-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
-
-        // V2
-        document.getElementById('v2-card-std').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-4 transition-all duration-200';
-        document.getElementById('v2-card-mem').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-4 transition-all duration-200';
-        document.getElementById('v2-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v2-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v2-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v2-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
-
-        // V3
-        document.getElementById('v3-card-std').className = 'cursor-pointer rounded border-2 border-[#475BB2] bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
-        document.getElementById('v3-card-mem').className = 'cursor-pointer rounded border-2 border-[#F4F4F4] hover:border-slate-300 bg-white p-5 flex flex-col justify-between transition-all duration-200 relative';
-        document.getElementById('v3-radio-out-std').className = 'w-4 h-4 rounded-full border-2 border-[#475BB2] flex items-center justify-center bg-white';
-        document.getElementById('v3-radio-in-std').className = 'w-2 h-2 rounded-full bg-[#475BB2]';
-        document.getElementById('v3-radio-out-mem').className = 'w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center bg-white';
-        document.getElementById('v3-radio-in-mem').className = 'w-2 h-2 rounded-full bg-transparent';
       }
     }
 
@@ -407,7 +502,7 @@
       document.getElementById('step-2-circle').className = 'w-7 h-7 rounded-full bg-[#475BB2] text-white flex items-center justify-center text-xs font-semibold';
 
       if (currentTrack === 'membership') {
-        document.getElementById('step-2-title').innerText = 'Step 2: Membership Plans & Access Rules';
+        document.getElementById('step-2-title').innerText = 'Step 2: Membership Plans & Content Access';
         document.getElementById('step-2-mem-box').classList.remove('hidden');
         document.getElementById('step-2-std-box').classList.add('hidden');
       } else {
@@ -425,6 +520,9 @@
       document.getElementById('step-1-circle').innerHTML = '1';
       document.getElementById('step-2-circle').className = 'w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs font-semibold';
     }
+
+    // Initialize with final agreed variation
+    setVariation('final');
   </script>
 </body>
 </html>
