@@ -10,6 +10,22 @@
 
 **Spec:** Live prototype: `https://bhattaganesh.github.io/ur-prototypes/profile-connect-free-pro/`
 
+## Verified Baseline
+
+- Local Free baseline checked on 2026-10-01: User Registration & Membership Free `v5.2.8` shows `Registration & Login > Profile Connect` as a paid upsell.
+- Local Users table baseline checked on 2026-10-01: it has the existing `Source` column and UR source/form filter, but no connect-to-form bulk action.
+- Profile Connect addon `v1.1.3` was installed and activated locally for verification.
+- Source truth from the addon:
+  - Basic bulk UI is intended to render through `manage_users_extra_tablenav` as a `Connect with form...` dropdown plus `Connect` button.
+  - Basic per-user UI is intended to render on user profile edit as `Connect To Form`.
+  - Both basic workflows write or delete the existing `ur_form_id` user meta key.
+  - Advanced Pro workflows include `Map External Plugin Fields`, `External Field Keys` to `Form Fields` mapping, usermeta/external-table selection, table name, user ID column, field key column, and field value column.
+- Active addon live check in the current local stack:
+  - The Profile Connect settings subtab still rendered the upsell card.
+  - The Users table did not contain `#new_form`, `#new_form2`, or `ur-connect-form-nonce`.
+  - The user profile edit screen did not contain `Connect To Form` or `ur_profile_connect`.
+- Implementation implication: migrate the source-defined basic behavior into Free explicitly and fix/harden its rendering, rather than depending on the old addon to display correctly with the current plugin stack.
+
 ## Global Constraints
 
 - This implements the limited Profile Connect in Free approach, not the default-form fallback approach.

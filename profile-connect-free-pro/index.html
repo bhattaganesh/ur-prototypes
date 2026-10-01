@@ -493,14 +493,15 @@
         <div class="pcp-head">
           <div>
             <h1>Profile Connect limited free tier</h1>
-            <p>Verified current Free UI: Profile Connect is an upsell, Users has no connect action. Proposed future UI: Free gets user-to-form assignment; Pro keeps advanced external data mapping.</p>
+            <p>Verified current Free UI and active addon behavior. Proposal: move the basic user-to-form assignment workflow into Free; keep external mapping and migration workflows in Pro.</p>
           </div>
-          <span class="pcp-badge free">Recommended Option B</span>
+          <span class="pcp-badge free">Recommended limited Free split</span>
         </div>
 
         <div class="pcp-tabs" role="tablist" aria-label="Prototype sections">
           <button class="pcp-tab" type="button" role="tab" aria-selected="true" data-panel="pcp-summary">Split</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-current-ui">Current UI</button>
+          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-addon-ui">Addon Check</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-issue-fit">Issue Fit</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-free-ui">Free UI</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-pro-ui">Pro UI</button>
@@ -672,6 +673,69 @@
           </div>
         </section>
 
+        <section id="pcp-addon-ui" class="pcp-panel" role="tabpanel">
+          <div class="pcp-notice">
+            <h2>Active addon verification</h2>
+            <p>The Profile Connect addon was installed and activated locally. Source confirms the addon intends to provide basic connect controls, but the live UI did not render those controls in this current stack.</p>
+          </div>
+
+          <div class="pcp-shot-grid">
+            <article class="pcp-shot">
+              <div class="pcp-shot-head">
+                <h2>Settings after activating addon</h2>
+                <p>The addon is active, but the Profile Connect settings subtab still shows the upsell card instead of the mapping settings.</p>
+              </div>
+              <div class="pcp-shot-body">
+                <div class="pcp-shot-frame">
+                  <img src="active-addon-profile-connect-settings-still-upsell.png" alt="Profile Connect settings screen after activating addon still showing the upsell card." />
+                </div>
+                <ul class="pcp-facts">
+                  <li>Observed after activating <code>User Registration Profile Connect</code> version <code>1.1.3</code>.</li>
+                  <li>The local admin header showed the newer URM Pro surface after activation.</li>
+                  <li>The settings subtab still rendered the upsell card instead of <code>Map External Plugin Fields</code>.</li>
+                  <li>Do not base the migration only on visible addon UI; use source-verified behavior for the exact feature split.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="pcp-shot">
+              <div class="pcp-shot-head">
+                <h2>Users table after activating addon</h2>
+                <p>The source expects a <code>Connect with form...</code> dropdown, but the live Users page did not include <code>new_form</code> or the connect nonce.</p>
+              </div>
+              <div class="pcp-shot-body">
+                <div class="pcp-shot-frame">
+                  <img src="active-addon-users-no-connect.png" alt="Users table after activating addon, showing filters but no Connect with form dropdown." />
+                </div>
+                <ul class="pcp-facts">
+                  <li>DOM verification found no <code>#new_form</code>, <code>#new_form2</code>, or <code>ur-connect-form-nonce</code>.</li>
+                  <li>The existing <code>All Sources</code> filter was present, but no bulk connect action was visible.</li>
+                  <li>Source file still defines the intended dropdown and <code>Connect</code> button.</li>
+                  <li>Free implementation should explicitly add this UI instead of depending on addon rendering.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="pcp-shot">
+              <div class="pcp-shot-head">
+                <h2>User profile after activating addon</h2>
+                <p>The source expects a <code>Connect To Form</code> select on user profile edit, but the live profile screen did not include that label or selector.</p>
+              </div>
+              <div class="pcp-shot-body">
+                <div class="pcp-shot-frame">
+                  <img src="active-addon-user-profile-no-connect.png" alt="User profile edit screen after activating addon, without the Connect To Form field." />
+                </div>
+                <ul class="pcp-facts">
+                  <li>DOM verification found no <code>Connect To Form</code> text and no <code>ur_profile_connect</code> select.</li>
+                  <li>The addon source includes <code>render_profile_field()</code> for this exact UI.</li>
+                  <li>This should be migrated into Free as a basic admin assignment control.</li>
+                  <li>During implementation, treat the current addon visibility issue as a compatibility bug to avoid carrying it into Free.</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </section>
+
         <section id="pcp-free-ui" class="pcp-panel" role="tabpanel">
           <div class="pcp-wpbox">
             <div class="pcp-wpbox-title">
@@ -722,6 +786,11 @@
             </div>
           </div>
 
+          <div class="pcp-notice" style="margin-top:14px">
+            <h3>Exact addon behavior to migrate into Free</h3>
+            <p>Bulk connect/disconnect should follow the addon source behavior: selected users, a form dropdown, and a <code>Connect</code> button. Selecting <code>None</code> deletes <code>ur_form_id</code>; selecting a valid User Registration form writes that form ID to <code>ur_form_id</code>.</p>
+          </div>
+
           <div class="pcp-grid" style="margin-top:14px">
             <div class="pcp-card">
               <div class="pcp-card-header">
@@ -737,6 +806,7 @@
                   <option>Student Registration Form</option>
                 </select>
               </div>
+              <p style="margin-top:10px">This mirrors the addon source label and save target, but should be hardened with exact capability and nonce handling before moving into Free.</p>
             </div>
 
             <div class="pcp-card">
@@ -773,6 +843,7 @@
                       <option>Address</option>
                     </select>
                   </div>
+                  <p style="margin-top:10px">Source labels: <code>External Field Keys</code> mapped into <code>Form Fields</code>.</p>
                 </div>
                 <div>
                   <h3>External table mapping</h3>
@@ -785,6 +856,7 @@
                       <option>user_id</option>
                     </select>
                   </div>
+                  <p style="margin-top:10px">Source settings: table selection, table name, user ID column, field key column, and field value column.</p>
                 </div>
               </div>
 
@@ -848,7 +920,7 @@
             <div class="pcp-source">
               <div class="pcp-source-row">
                 <strong>Addon bootstrap</strong>
-                <span>Separate plugin, version 1.1.3: <code>user-registration-profile-connect/user-registration-profile-connect.php:3-39</code></span>
+                <span>Separate plugin, version <code>1.1.3</code>, tested up to Pro <code>6.0</code>: <code>user-registration-profile-connect/user-registration-profile-connect.php:3-39</code></span>
               </div>
               <div class="pcp-source-row">
                 <strong>Current Pro requirement</strong>
@@ -881,6 +953,10 @@
               <div class="pcp-source-row">
                 <strong>Live admin check</strong>
                 <span>Verified in local WordPress admin on 2026-10-01: Free <code>v5.2.8</code> shows a Profile Connect upsell card and the Users table has no connect-to-form action.</span>
+              </div>
+              <div class="pcp-source-row">
+                <strong>Active addon check</strong>
+                <span>After activating addon <code>1.1.3</code>, the settings subtab still showed the upsell and the Users/profile screens did not render the source-defined basic controls in this local stack.</span>
               </div>
             </div>
           </div>
