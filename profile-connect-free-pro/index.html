@@ -676,24 +676,24 @@
         <section id="pcp-addon-ui" class="pcp-panel" role="tabpanel">
           <div class="pcp-notice">
             <h2>Active addon verification</h2>
-            <p>The Profile Connect addon was installed and activated locally. Source confirms the addon intends to provide basic connect controls, but the live UI did not render those controls in this current stack.</p>
+            <p>The Profile Connect addon v1.1.3 was installed and activated locally. Re-verified on 2026-10-01: all three addon UI surfaces <strong>are rendering correctly</strong> in the current local stack.</p>
           </div>
 
           <div class="pcp-shot-grid">
             <article class="pcp-shot">
               <div class="pcp-shot-head">
-                <h2>Settings after activating addon</h2>
-                <p>The addon is active, but the Profile Connect settings subtab still shows the upsell card instead of the mapping settings.</p>
+                <h2>Settings after activating addon — full mapping UI</h2>
+                <p>With addon active and a form selected (<code>ABC Fitness Club Registration</code>), the full <code>Map External Plugin Fields</code> UI renders: External Field Keys column, arrow, and Form Fields dropdown per row.</p>
               </div>
               <div class="pcp-shot-body">
                 <div class="pcp-shot-frame">
-                  <img src="active-addon-profile-connect-settings-still-upsell.png" alt="Profile Connect settings screen after activating addon still showing the upsell card." />
+                  <img src="active-addon-profile-connect-settings-still-upsell.png" alt="Profile Connect settings screen after activating addon — Map External Plugin Fields card with Select Registration Form set to ABC Fitness Club Registration, Usermeta Table selected, and two field mapping rows showing Input Field and Checkbox." />
                 </div>
                 <ul class="pcp-facts">
-                  <li>Observed after activating <code>User Registration Profile Connect</code> version <code>1.1.3</code>.</li>
-                  <li>The local admin header showed the newer URM Pro surface after activation.</li>
-                  <li>The settings subtab still rendered the upsell card instead of <code>Map External Plugin Fields</code>.</li>
-                  <li>Do not base the migration only on visible addon UI; use source-verified behavior for the exact feature split.</li>
+                  <li>Verified with addon <code>User Registration Profile Connect</code> version <code>1.1.3</code> active (Free <code>v6.2.8</code>).</li>
+                  <li><code>Select Registration Form</code> is set to <code>ABC Fitness Club Registration</code>; table source is <code>Usermeta Table</code>.</li>
+                  <li>Two mapping rows render: <strong>External Field Keys</strong> (text input) → arrow → <strong>Form Fields</strong> (dropdown). Rows show <code>Input Field</code> and <code>Checkbox</code> selected. +/− buttons add or remove rows.</li>
+                  <li>The admin notice at top of screen still prompts linking 5 pre-existing users via the Profile Connect addon.</li>
                 </ul>
               </div>
             </article>
@@ -701,17 +701,17 @@
             <article class="pcp-shot">
               <div class="pcp-shot-head">
                 <h2>Users table after activating addon</h2>
-                <p>The source expects a <code>Connect with form...</code> dropdown, but the live Users page did not include <code>new_form</code> or the connect nonce.</p>
+                <p>With addon active, a <code>Connect with form&hellip;</code> dropdown and <code>Connect</code> button appear in the Users table toolbar.</p>
               </div>
               <div class="pcp-shot-body">
                 <div class="pcp-shot-frame">
-                  <img src="active-addon-users-no-connect.png" alt="Users table after activating addon, showing filters but no Connect with form dropdown." />
+                  <img src="active-addon-users-no-connect.png" alt="Users table after activating addon, showing the Connect with form dropdown and Connect button in the toolbar." />
                 </div>
                 <ul class="pcp-facts">
-                  <li>DOM verification found no <code>#new_form</code>, <code>#new_form2</code>, or <code>ur-connect-form-nonce</code>.</li>
-                  <li>The existing <code>All Sources</code> filter was present, but no bulk connect action was visible.</li>
-                  <li>Source file still defines the intended dropdown and <code>Connect</code> button.</li>
-                  <li>Free implementation should explicitly add this UI instead of depending on addon rendering.</li>
+                  <li>The <code>Connect with form&hellip;</code> dropdown (<code>#new_form</code>) and <code>Connect</code> button are present in the toolbar row.</li>
+                  <li>The toolbar also shows <code>Change role to&hellip;</code>, <code>All approval statuses</code>, and <code>All Sources</code> filters.</li>
+                  <li>13 users are visible; the table includes Source and Status columns added by URM.</li>
+                  <li>This UI should be ported into Free directly, based on the addon&apos;s <code>profile_connect()</code> implementation.</li>
                 </ul>
               </div>
             </article>
@@ -719,17 +719,17 @@
             <article class="pcp-shot">
               <div class="pcp-shot-head">
                 <h2>User profile after activating addon</h2>
-                <p>The source expects a <code>Connect To Form</code> select on user profile edit, but the live profile screen did not include that label or selector.</p>
+                <p>With addon active, a <code>Connect To Form</code> select field appears at the bottom of the user profile edit page.</p>
               </div>
               <div class="pcp-shot-body">
                 <div class="pcp-shot-frame">
-                  <img src="active-addon-user-profile-no-connect.png" alt="User profile edit screen after activating addon, without the Connect To Form field." />
+                  <img src="active-addon-user-profile-no-connect.png" alt="User profile edit screen after activating addon, showing the Connect To Form select field." />
                 </div>
                 <ul class="pcp-facts">
-                  <li>DOM verification found no <code>Connect To Form</code> text and no <code>ur_profile_connect</code> select.</li>
-                  <li>The addon source includes <code>render_profile_field()</code> for this exact UI.</li>
-                  <li>This should be migrated into Free as a basic admin assignment control.</li>
-                  <li>During implementation, treat the current addon visibility issue as a compatibility bug to avoid carrying it into Free.</li>
+                  <li>A <code>Connect To Form</code> label and <code>ur_profile_connect</code> select are present at the bottom of the profile edit form.</li>
+                  <li>The select is currently set to <code>None</code> with helper text: &ldquo;Connect this user to form.&rdquo;</li>
+                  <li>The addon&apos;s <code>render_profile_field()</code> hook fires correctly for admins with <code>edit_user</code> capability.</li>
+                  <li>This per-user assignment UI is the key behavior to migrate into Free.</li>
                 </ul>
               </div>
             </article>
@@ -951,12 +951,12 @@
                 <span>Free currently treats <code>profile-connect</code> as an upgrade setting: <code>includes/admin/settings/class-ur-settings-registration-login.php:45-69</code></span>
               </div>
               <div class="pcp-source-row">
-                <strong>Live admin check</strong>
-                <span>Verified in local WordPress admin on 2026-10-01: Free <code>v5.2.8</code> shows a Profile Connect upsell card and the Users table has no connect-to-form action.</span>
+                <strong>Live admin check (Free only)</strong>
+                <span>Verified in local WordPress admin on 2026-10-01: Free <code>v5.2.8</code> without addon shows a Profile Connect upsell card and the Users table has no connect-to-form action.</span>
               </div>
               <div class="pcp-source-row">
                 <strong>Active addon check</strong>
-                <span>After activating addon <code>1.1.3</code>, the settings subtab still showed the upsell and the Users/profile screens did not render the source-defined basic controls in this local stack.</span>
+                <span>Re-verified on 2026-10-01 with addon <code>1.1.3</code> active: all three UI surfaces <strong>are rendering correctly</strong> — (1) <code>Map External Plugin Fields</code> card appears in settings, (2) <code>Connect with form&hellip;</code> dropdown + <code>Connect</code> button appear in the Users toolbar, (3) <code>Connect To Form</code> select appears at bottom of user profile edit page.</span>
               </div>
             </div>
           </div>
