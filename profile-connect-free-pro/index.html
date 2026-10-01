@@ -501,8 +501,10 @@
         <div class="pcp-tabs" role="tablist" aria-label="Prototype sections">
           <button class="pcp-tab" type="button" role="tab" aria-selected="true" data-panel="pcp-summary">Split</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-current-ui">Current UI</button>
+          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-issue-fit">Issue Fit</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-free-ui">Free UI</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-pro-ui">Pro UI</button>
+          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-plan">Plan</button>
           <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-evidence">Evidence</button>
         </div>
 
@@ -561,6 +563,49 @@
               <h3>Handle addon conflict</h3>
               <p>Detect the old addon and avoid double-registering hooks after Free ships the basics.</p>
             </div>
+          </div>
+        </section>
+
+        <section id="pcp-issue-fit" class="pcp-panel" role="tabpanel">
+          <div class="pcp-notice">
+            <h2>Alignment with GitHub issue #1745</h2>
+            <p>This prototype represents the partial Profile Connect in Free path from the issue. It does not represent the default-form fallback path.</p>
+          </div>
+
+          <div class="pcp-grid">
+            <div class="pcp-card">
+              <div class="pcp-card-header">
+                <h2>In scope</h2>
+                <span class="pcp-badge free">#1745 Option A</span>
+              </div>
+              <ul class="pcp-list">
+                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Free users can adopt existing WordPress users by assigning them to a User Registration form.</span></li>
+                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Admins can assign users in bulk from the Users table.</span></li>
+                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Admins can assign or disconnect one user from the profile edit screen.</span></li>
+                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>The Profile Connect upsell is rewritten so Free no longer sells the basic recovery path.</span></li>
+              </ul>
+            </div>
+
+            <div class="pcp-card">
+              <div class="pcp-card-header">
+                <h2>Not included</h2>
+                <span class="pcp-badge pro">Separate scope</span>
+              </div>
+              <ul class="pcp-list">
+                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No automatic default-form fallback when <code>ur_form_id</code> is empty.</span></li>
+                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No automatic fallback when a linked registration form is deleted.</span></li>
+                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No external table or external field mapping in Free.</span></li>
+                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No CSV/import wizard in Free.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pcp-card" style="margin-top:14px">
+            <div class="pcp-card-header">
+              <h2>Decision wording</h2>
+              <span class="pcp-badge">Use with team</span>
+            </div>
+            <p>Recommended decision: ship a limited Profile Connect feature in Free. This directly addresses the existing-user adoption complaint while keeping advanced migration and mapping workflows in Pro. The deleted-form recovery case gets a manual admin recovery path through reassignment; automatic fallback remains a separate product decision.</p>
           </div>
         </section>
 
@@ -748,6 +793,49 @@
                 <p>The current addon uses Pro-only DB table helper functions for external source mapping, and this part has higher security/review cost than simply assigning <code>ur_form_id</code>.</p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section id="pcp-plan" class="pcp-panel" role="tabpanel">
+          <div class="pcp-notice">
+            <h2>Implementation plan</h2>
+            <p>The implementation plan is written as a task-by-task handoff for engineering review.</p>
+          </div>
+
+          <div class="pcp-grid">
+            <div class="pcp-card">
+              <div class="pcp-card-header">
+                <h2>Primary work</h2>
+                <span class="pcp-badge free">Free plugin</span>
+              </div>
+              <ul class="pcp-list">
+                <li><i data-lucide="list-checks" aria-hidden="true"></i><span>Extract and harden basic connect/disconnect workflows from the addon.</span></li>
+                <li><i data-lucide="shield-check" aria-hidden="true"></i><span>Use nonce checks, exact capabilities, valid form checks, and sanitized redirects.</span></li>
+                <li><i data-lucide="panel-top" aria-hidden="true"></i><span>Replace the Profile Connect upsell with Free assignment guidance and Pro mapping upsell.</span></li>
+                <li><i data-lucide="bell-off" aria-hidden="true"></i><span>Rewrite notices so they no longer sell the basic adoption path.</span></li>
+              </ul>
+            </div>
+
+            <div class="pcp-card">
+              <div class="pcp-card-header">
+                <h2>Review risks</h2>
+                <span class="pcp-badge pro">Needs care</span>
+              </div>
+              <ul class="pcp-list">
+                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not load the old addon hooks twice if the separate addon is active.</span></li>
+                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not move external table SQL into Free without a separate security pass.</span></li>
+                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not change direct <code>ur_form_id</code> readers unless the scope expands beyond assignment.</span></li>
+                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not call this default-form fallback; it is a different option from the issue.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pcp-card" style="margin-top:14px">
+            <div class="pcp-card-header">
+              <h2>Plan document</h2>
+              <span class="pcp-badge">Markdown</span>
+            </div>
+            <p><a href="plan.md">Open the implementation plan</a></p>
           </div>
         </section>
 
