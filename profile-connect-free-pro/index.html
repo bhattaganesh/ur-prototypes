@@ -1,1026 +1,1003 @@
-<div id="profile-connect-prototype" class="pcp">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration — Settings: Profile Connect (Crystal Clear UX)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap">
   <style>
-    #profile-connect-prototype {
-      --pcp-bg: light-dark(#f6f7f7, #151719);
-      --pcp-surface: light-dark(#ffffff, #1f2327);
-      --pcp-surface-2: light-dark(#f0f6fc, #182332);
-      --pcp-border: light-dark(#dcdcde, #3b4148);
-      --pcp-text: light-dark(#1d2327, #f0f0f1);
-      --pcp-muted: light-dark(#50575e, #b6bcc4);
-      --pcp-blue: light-dark(#2271b1, #72aee6);
-      --pcp-green: light-dark(#008a20, #68de7c);
-      --pcp-orange: light-dark(#b26200, #f0b849);
-      --pcp-red: light-dark(#b32d2e, #ff8085);
-      --pcp-shadow: light-dark(0 1px 2px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.28));
-      color: var(--pcp-text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    :root {
+      --ur-primary: #475bb2;
+      --ur-primary-hover: #2e44a1;
+      --ur-card-bg: #ffffff;
+      --ur-border: #e1e1e1;
+      --ur-text: #383838;
+      --ur-text-heading: #131313;
+      --ur-canvas-bg: #f4f4f4;
+      --ur-sidebar-w: 280px;
     }
 
-    #profile-connect-prototype * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f0f0f1; color: var(--ur-text); font-size: 13px; line-height: 1.5; }
 
-    #profile-connect-prototype .pcp-shell {
-      background: var(--pcp-bg);
-      border: 1px solid var(--pcp-border);
-      min-height: 640px;
-    }
-
-    #profile-connect-prototype .pcp-adminbar {
-      min-height: 34px;
-      background: light-dark(#1d2327, #0f1113);
-      color: #f0f0f1;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 0 14px;
-      font-size: 13px;
-      font-weight: 400;
-    }
-
-    #profile-connect-prototype .pcp-layout {
-      display: grid;
-      grid-template-columns: 174px minmax(0, 1fr);
-      min-height: 606px;
-    }
-
-    #profile-connect-prototype .pcp-sidebar {
-      background: light-dark(#1d2327, #111315);
-      color: #c3c4c7;
-      padding: 12px 0;
-    }
-
-    #profile-connect-prototype .pcp-sideitem {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      min-height: 34px;
-      padding: 0 12px;
-      font-size: 14px;
-    }
-
-    #profile-connect-prototype .pcp-sideitem.active {
-      background: var(--pcp-blue);
+    /* Top Prototype View Switcher */
+    .proto-switcher {
+      background: #111827;
       color: #fff;
-    }
-
-    #profile-connect-prototype .pcp-content {
-      padding: 22px;
-      min-width: 0;
-    }
-
-    #profile-connect-prototype .pcp-head {
+      padding: 10px 20px;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
+      border-bottom: 2px solid var(--ur-primary);
+      position: sticky;
+      top: 0;
+      z-index: 9999;
     }
-
-    #profile-connect-prototype h1,
-    #profile-connect-prototype h2,
-    #profile-connect-prototype h3 {
-      margin: 0;
-      font-weight: 500;
-      color: var(--pcp-text);
+    .proto-switcher-title { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .proto-switcher-modes { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .proto-btn {
+      background: #374151;
+      border: 1px solid #4b5563;
+      color: #e5e7eb;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
     }
+    .proto-btn:hover { background: #4b5563; }
+    .proto-btn.active { background: var(--ur-primary); border-color: var(--ur-primary); color: #fff; }
 
-    #profile-connect-prototype h1 {
-      font-size: 23px;
-      line-height: 1.3;
+    /* Top Admin Bar */
+    .wp-topbar { height: 32px; background: #1d2327; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: #c3c4c7; font-size: 12px; }
+
+    /* Main Container */
+    .wp-wrap { display: flex; min-height: calc(100vh - 78px); }
+    .wp-admin-sidebar { width: 160px; background: #1d2327; color: #c3c4c7; flex-shrink: 0; padding-top: 8px; }
+    .wp-admin-menu-item { padding: 8px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .wp-admin-menu-item:hover { color: #fff; }
+    .wp-admin-menu-item.active { background: #2271b1; color: #fff; }
+
+    /* Views */
+    .view-screen { display: none; flex: 1; }
+    .view-screen.active { display: flex; }
+
+    /* Dashboard View */
+    .dashboard-wrap { flex: 1; padding: 24px 32px; background: #f0f0f1; }
+    .dashboard-header { margin-bottom: 20px; }
+    .dashboard-header h1 { font-size: 23px; font-weight: 400; color: #1d2327; }
+
+    /* User Registration Settings Area */
+    .user-registration-settings-wrapper { flex: 1; display: flex; background: #fff; }
+    .user-registration-header { width: var(--ur-sidebar-w); background: #fff; border-right: 1px solid var(--ur-border); padding-top: 24px; flex-shrink: 0; }
+    .ur-nav__link { padding: 14px 20px; border-top: 1px solid var(--ur-border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 14px; font-weight: 500; color: #4e4e4e; }
+    .ur-nav__link.is-active { background: #fff; color: var(--ur-primary); border-left: 4px solid var(--ur-primary); }
+    
+    .ur-subsubsub { list-style: none; padding: 12px 14px 12px 40px; background: #f4f4f4; border-left: 4px solid var(--ur-primary); }
+    .ur-subsubsub li { padding: 4px 0; }
+    .ur-subsubsub li a { text-decoration: none; color: #4e4e4e; font-size: 13px; }
+    .ur-subsubsub li a:hover { color: var(--ur-primary); }
+    .ur-subsubsub li.current a { color: var(--ur-primary); font-weight: 600; }
+
+    /* Settings Main Canvas */
+    .user-registration-settings-container { flex: 1; padding: 24px 32px; background: var(--ur-canvas-bg); }
+    .user-registration-options-header--top { padding-bottom: 20px; border-bottom: 1px solid var(--ur-border); margin-bottom: 24px; }
+    .user-registration-options-header--top h3 { font-size: 24px; font-weight: 600; color: var(--ur-text-heading); }
+
+    /* Native Admin Notice */
+    .notice { background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,0.04); }
+    .notice-info { border-left-color: #72aee6; }
+    .notice p { margin: 0; font-size: 13px; line-height: 1.5; color: #1d2327; }
+    .notice a { color: var(--ur-primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+    /* UR Card */
+    .user-registration-card {
+      background: #ffffff;
+      border: 1px solid var(--ur-border);
+      border-radius: 7px;
+      padding: 20px 24px 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
-
-    #profile-connect-prototype h2 {
-      font-size: 18px;
-      line-height: 1.35;
+    .user-registration-card__header {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--ur-border);
+      margin-bottom: 20px;
     }
-
-    #profile-connect-prototype h3 {
-      font-size: 15px;
-      line-height: 1.4;
+    .user-registration-card__title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ur-text-heading);
     }
-
-    #profile-connect-prototype p {
-      margin: 0;
-      color: var(--pcp-muted);
+    .user-registration-card__desc {
       font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
       line-height: 1.5;
     }
 
-    #profile-connect-prototype .pcp-badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 24px;
-      padding: 2px 8px;
-      border-radius: 3px;
-      border: 1px solid var(--pcp-border);
-      background: var(--pcp-surface);
-      color: var(--pcp-muted);
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    #profile-connect-prototype .pcp-badge.free {
-      color: var(--pcp-green);
-      border-color: color-mix(in srgb, var(--pcp-green) 38%, var(--pcp-border));
-      background: color-mix(in srgb, var(--pcp-green) 10%, var(--pcp-surface));
-    }
-
-    #profile-connect-prototype .pcp-badge.pro {
-      color: var(--pcp-orange);
-      border-color: color-mix(in srgb, var(--pcp-orange) 40%, var(--pcp-border));
-      background: color-mix(in srgb, var(--pcp-orange) 11%, var(--pcp-surface));
-    }
-
-    #profile-connect-prototype .pcp-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    #profile-connect-prototype .pcp-tab {
-      border: 1px solid var(--pcp-border);
-      background: var(--pcp-surface);
-      color: var(--pcp-text);
-      min-height: 34px;
-      padding: 6px 10px;
-      border-radius: 3px;
+    /* Safety banner */
+    .ur-safety-banner {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
       font-size: 13px;
-      font: inherit;
+      color: #166534;
+      line-height: 1.6;
     }
 
-    #profile-connect-prototype .pcp-tab[aria-selected="true"] {
-      border-color: var(--pcp-blue);
-      box-shadow: inset 0 -2px 0 var(--pcp-blue);
-      color: var(--pcp-blue);
-    }
-
-    #profile-connect-prototype .pcp-panel {
-      display: none;
-    }
-
-    #profile-connect-prototype .pcp-panel.active {
-      display: block;
-    }
-
-    #profile-connect-prototype .pcp-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    #profile-connect-prototype .pcp-shot-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
-    }
-
-    #profile-connect-prototype .pcp-shot {
-      background: var(--pcp-surface);
-      border: 1px solid var(--pcp-border);
-      box-shadow: var(--pcp-shadow);
-      overflow: hidden;
-    }
-
-    #profile-connect-prototype .pcp-shot-head {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--pcp-border);
-      display: grid;
-      gap: 5px;
-    }
-
-    #profile-connect-prototype .pcp-shot-body {
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
-      gap: 14px;
-      padding: 14px;
-      align-items: start;
-    }
-
-    #profile-connect-prototype .pcp-shot-frame {
-      border: 1px solid var(--pcp-border);
-      background: light-dark(#f6f7f7, #111315);
-      overflow: auto;
-      max-height: 430px;
-    }
-
-    #profile-connect-prototype .pcp-shot-frame img {
-      display: block;
-      width: 100%;
-      height: auto;
-      min-width: 720px;
-    }
-
-    #profile-connect-prototype .pcp-facts {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 10px;
-    }
-
-    #profile-connect-prototype .pcp-facts li {
-      border-left: 3px solid var(--pcp-blue);
-      padding-left: 10px;
-      color: var(--pcp-text);
+    /* Explanation callout */
+    .ur-info-callout {
+      background: #f1f2f9;
+      border-left: 4px solid var(--ur-primary);
+      padding: 14px 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
       font-size: 13px;
-      line-height: 1.45;
+      color: #383838;
+      line-height: 1.6;
     }
 
-    #profile-connect-prototype .pcp-card {
-      background: var(--pcp-surface);
-      border: 1px solid var(--pcp-border);
-      box-shadow: var(--pcp-shadow);
-      padding: 14px;
-    }
+    /* Form Table */
+    .form-table-ur { width: 100%; border-collapse: collapse; }
+    .form-table-ur th { width: 280px; padding: 16px 0; text-align: left; vertical-align: top; font-size: 13px; font-weight: 600; color: #1d2327; }
+    .form-table-ur td { padding: 16px 0; vertical-align: middle; }
+    .ur-enhanced-select, .ur-text-input { min-width: 380px; height: 34px; border: 1px solid #8c8f94; border-radius: 3px; padding: 0 10px; font-size: 13px; background: #fff; }
+    .description-tip { color: #64748b; font-size: 12px; margin-top: 5px; }
 
-    #profile-connect-prototype .pcp-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    #profile-connect-prototype .pcp-list {
-      margin: 10px 0 0;
-      padding: 0;
-      list-style: none;
+    /* Repeater Mapping */
+    .ur-profile-connect-field-mapping-box { list-style: none; margin-top: 10px; }
+    .ur-profile-connect-mapping-header { display: grid; grid-template-columns: 240px 30px 260px 80px; gap: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 600; color: #1d2327; text-transform: uppercase; }
+    .ur-profile-connect-external-field-map-group {
       display: grid;
-      gap: 8px;
-    }
-
-    #profile-connect-prototype .pcp-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--pcp-text);
-    }
-
-    #profile-connect-prototype .pcp-list i {
-      width: 16px;
-      height: 16px;
-      flex: 0 0 auto;
-      margin-top: 1px;
-      color: var(--pcp-blue);
-    }
-
-    #profile-connect-prototype .pcp-wpbox {
-      background: var(--pcp-surface);
-      border: 1px solid var(--pcp-border);
-      box-shadow: var(--pcp-shadow);
-    }
-
-    #profile-connect-prototype .pcp-wpbox-title {
-      border-bottom: 1px solid var(--pcp-border);
-      padding: 11px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      grid-template-columns: 240px 30px 260px 80px;
       gap: 12px;
-    }
-
-    #profile-connect-prototype .pcp-wpbox-body {
-      padding: 12px;
-    }
-
-    #profile-connect-prototype .pcp-toolbar {
-      display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    #profile-connect-prototype select,
-    #profile-connect-prototype input[type="text"] {
-      min-height: 32px;
-      border: 1px solid var(--pcp-border);
-      background: var(--pcp-surface);
-      color: var(--pcp-text);
-      border-radius: 3px;
-      padding: 4px 8px;
-      font: inherit;
-      font-size: 13px;
-      max-width: 100%;
-    }
-
-    #profile-connect-prototype .pcp-button {
-      min-height: 32px;
-      border: 1px solid var(--pcp-blue);
-      background: var(--pcp-blue);
-      color: #fff;
-      border-radius: 3px;
-      padding: 5px 12px;
-      font: inherit;
-      font-size: 13px;
-    }
-
-    #profile-connect-prototype .pcp-button.secondary {
-      background: var(--pcp-surface);
-      color: var(--pcp-blue);
-    }
-
-    #profile-connect-prototype table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      color: var(--pcp-text);
-    }
-
-    #profile-connect-prototype th,
-    #profile-connect-prototype td {
-      border-top: 1px solid var(--pcp-border);
-      padding: 9px 8px;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    #profile-connect-prototype th {
-      color: var(--pcp-muted);
-      font-weight: 500;
-      background: light-dark(#f6f7f7, #181b1e);
-    }
-
-    #profile-connect-prototype .pcp-user {
-      color: var(--pcp-blue);
-      font-weight: 500;
-    }
-
-    #profile-connect-prototype .pcp-status {
-      display: inline-flex;
-      align-items: center;
-      min-height: 22px;
-      padding: 1px 7px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--pcp-green) 12%, var(--pcp-surface));
-      color: var(--pcp-green);
-      border: 1px solid color-mix(in srgb, var(--pcp-green) 35%, var(--pcp-border));
-      font-size: 12px;
-    }
-
-    #profile-connect-prototype .pcp-status.empty {
-      background: color-mix(in srgb, var(--pcp-red) 8%, var(--pcp-surface));
-      color: var(--pcp-red);
-      border-color: color-mix(in srgb, var(--pcp-red) 35%, var(--pcp-border));
-    }
-
-    #profile-connect-prototype .pcp-notice {
-      border-left: 4px solid var(--pcp-blue);
-      background: var(--pcp-surface);
-      border-top: 1px solid var(--pcp-border);
-      border-right: 1px solid var(--pcp-border);
-      border-bottom: 1px solid var(--pcp-border);
-      padding: 11px 12px;
-      margin-bottom: 14px;
-      box-shadow: var(--pcp-shadow);
-    }
-
-    #profile-connect-prototype .pcp-split {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 14px;
-    }
-
-    #profile-connect-prototype .pcp-flow {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    #profile-connect-prototype .pcp-step {
-      background: var(--pcp-surface);
-      border: 1px solid var(--pcp-border);
-      padding: 12px;
-      min-height: 116px;
-    }
-
-    #profile-connect-prototype .pcp-num {
-      width: 24px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: var(--pcp-blue);
-      color: #fff;
-      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      background: #f0f1f5;
       margin-bottom: 8px;
     }
+    .ur-profile-connect-operator { text-align: center; color: var(--ur-primary); font-size: 14px; }
+    .ur-profile-connect-mapping-action { display: flex; gap: 6px; }
+    .ur-profile-connect-mapping-action span {
+      width: 28px; height: 28px; background: #fff; border: 1px solid #dee0e9; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #676d8a; font-weight: bold; font-size: 14px;
+    }
+    .ur-profile-connect-mapping-action .add:hover { background: var(--ur-primary); color: #fff; border-color: var(--ur-primary); }
+    .ur-profile-connect-mapping-action .remove:hover { background: #ff4f55; color: #fff; border-color: #ff4f55; }
 
-    #profile-connect-prototype .pcp-source {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
+    /* Buttons */
+    .button-primary {
+      background: var(--ur-primary) !important;
+      border-color: var(--ur-primary) !important;
+      color: #fff !important;
+      min-height: 32px !important;
+      padding: 0 14px !important;
+      border-radius: 3px !important;
+      font-size: 13px !important;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .button-primary:hover { background: var(--ur-primary-hover) !important; }
+    .button-secondary {
+      background: #f6f7f7 !important;
+      border-color: #dcdcde !important;
+      color: #2c3338 !important;
+      min-height: 32px !important;
+      padding: 0 14px !important;
+      border-radius: 3px !important;
+      font-size: 13px !important;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
     }
 
-    #profile-connect-prototype .pcp-source-row {
-      display: grid;
-      grid-template-columns: 160px minmax(0, 1fr);
+    /* Options list inside Card 2 */
+    .ur-filter-box {
+      margin-bottom: 20px;
+    }
+    .ur-radio-option {
+      display: flex;
+      align-items: flex-start;
       gap: 10px;
-      align-items: start;
-      border-top: 1px solid var(--pcp-border);
-      padding-top: 8px;
-      font-size: 12px;
-      color: var(--pcp-muted);
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    .ur-radio-option input[type="radio"] {
+      margin-top: 3px;
     }
 
-    #profile-connect-prototype code {
-      font-family: Consolas, Monaco, monospace;
-      font-size: 12px;
-      color: var(--pcp-text);
-      background: color-mix(in srgb, var(--pcp-border) 35%, transparent);
-      padding: 1px 4px;
-      border-radius: 3px;
-      overflow-wrap: anywhere;
-    }
-
-    #profile-connect-prototype .pcp-demo-result {
+    /* Step guide card for manual users */
+    .ur-step-guide {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 5px;
+      padding: 12px 14px;
       margin-top: 10px;
-      color: var(--pcp-muted);
+      font-size: 12px;
+      color: #1e3a8a;
+      line-height: 1.6;
+    }
+    .ur-step-guide ol {
+      margin: 4px 0 0 18px;
+      padding: 0;
+    }
+
+    /* Interactive Teaser Box for Free Tier */
+    .ur-free-teaser-container {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #fafafa;
+    }
+    .ur-teaser-blurred-content {
+      padding: 20px;
+      filter: blur(1.5px);
+      opacity: 0.65;
+      pointer-events: none;
+      user-select: none;
+    }
+    .ur-teaser-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      backdrop-filter: blur(2px);
+    }
+    .ur-pro-crown-badge {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .ur-teaser-overlay h4 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .ur-teaser-overlay p {
       font-size: 13px;
-      min-height: 20px;
+      color: #475569;
+      max-width: 580px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .ur-teaser-feature-chips {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .ur-teaser-chip {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #334155;
+      font-weight: 600;
     }
 
-    @media (max-width: 760px) {
-      #profile-connect-prototype .pcp-layout,
-      #profile-connect-prototype .pcp-grid,
-      #profile-connect-prototype .pcp-split,
-      #profile-connect-prototype .pcp-flow,
-      #profile-connect-prototype .pcp-shot-body {
-        grid-template-columns: 1fr;
-      }
-
-      #profile-connect-prototype .pcp-sidebar {
-        display: none;
-      }
-
-      #profile-connect-prototype .pcp-head,
-      #profile-connect-prototype .pcp-card-header,
-      #profile-connect-prototype .pcp-wpbox-title {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      #profile-connect-prototype .pcp-source-row {
-        grid-template-columns: 1fr;
-      }
-
-      #profile-connect-prototype .pcp-shot-frame img {
-        min-width: 620px;
-      }
-    }
+    /* Progress bar */
+    .ur-batch-progress-wrapper { display: none; margin-top: 18px; padding: 16px; background: #f8fafc; border: 1px solid var(--ur-border); border-radius: 6px; }
+    .ur-batch-progress-bar-bg { width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+    .ur-batch-progress-bar-fill { height: 100%; width: 0%; background: var(--ur-primary); transition: width 0.2s ease; }
+    .ur-batch-status-row { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; color: #475569; }
+    .ur-spinner { width: 14px; height: 14px; border: 2px solid #ccc; border-top-color: var(--ur-primary); border-radius: 50%; animation: ur-spin 0.6s linear infinite; display: inline-block; vertical-align: middle; }
+    @keyframes ur-spin { to { transform: rotate(360deg); } }
   </style>
+</head>
+<body>
 
-  <div class="pcp-shell">
-    <div class="pcp-adminbar">
-      <span>User Registration & Membership</span>
-      <span>Free/Pro proposal</span>
-      <span>Profile Connect limited free tier</span>
+  <!-- PROTOTYPE WORKFLOW SWITCHER -->
+  <div class="proto-switcher">
+    <div class="proto-switcher-title">
+      <span>🛠️ Interactive Prototype Mode:</span>
+      <span style="font-weight: 400; color: #9ca3af;">Switch between steps and Free vs Pro states:</span>
     </div>
-    <div class="pcp-layout">
-      <aside class="pcp-sidebar" aria-label="WordPress admin navigation mockup">
-        <div class="pcp-sideitem">Dashboard</div>
-        <div class="pcp-sideitem active">Users</div>
-        <div class="pcp-sideitem">User Registration</div>
-        <div class="pcp-sideitem">Settings</div>
-      </aside>
-      <main class="pcp-content">
-        <div class="pcp-head">
-          <div>
-            <h1>Profile Connect limited free tier</h1>
-            <p>Verified current Free UI and active addon behavior. Proposal: move the basic user-to-form assignment workflow into Free; keep external mapping and migration workflows in Pro.</p>
-          </div>
-          <span class="pcp-badge free">Recommended limited Free split</span>
-        </div>
-
-        <div class="pcp-tabs" role="tablist" aria-label="Prototype sections">
-          <button class="pcp-tab" type="button" role="tab" aria-selected="true" data-panel="pcp-summary">Split</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-current-ui">Current UI</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-addon-ui">Addon Check</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-issue-fit">Issue Fit</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-free-ui">Free UI</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-pro-ui">Pro UI</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-plan">Plan</button>
-          <button class="pcp-tab" type="button" role="tab" aria-selected="false" data-panel="pcp-evidence">Evidence</button>
-        </div>
-
-        <section id="pcp-summary" class="pcp-panel active" role="tabpanel">
-          <div class="pcp-notice">
-            <h2>Team-facing proposal</h2>
-            <p>Ship the adoption workflow in Free so existing WordPress users can be connected to a User Registration form. Keep data migration and source mapping in Pro.</p>
-          </div>
-
-          <div class="pcp-split">
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Free</h2>
-                <span class="pcp-badge free">Included</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Bulk connect selected users to a registration form from <code>Users</code>.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Bulk disconnect selected users by deleting <code>ur_form_id</code>.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Connect or change one user's form from the user profile edit screen.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Replace the current Profile Connect upsell section with practical assignment guidance.</span></li>
-              </ul>
-            </div>
-
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Pro</h2>
-                <span class="pcp-badge pro">Retained</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="lock" aria-hidden="true"></i><span>External field key to UR field mapping.</span></li>
-                <li><i data-lucide="lock" aria-hidden="true"></i><span>External database table selection and column mapping.</span></li>
-                <li><i data-lucide="lock" aria-hidden="true"></i><span>Copying mapped external values into UR user meta during connection.</span></li>
-                <li><i data-lucide="lock" aria-hidden="true"></i><span>Future migration tools such as CSV/source-specific imports can stay Pro.</span></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="pcp-flow" aria-label="Implementation flow">
-            <div class="pcp-step">
-              <span class="pcp-num">1</span>
-              <h3>Move basic connector</h3>
-              <p>Port bulk and per-user assignment into Free with hardened permissions and nonces.</p>
-            </div>
-            <div class="pcp-step">
-              <span class="pcp-num">2</span>
-              <h3>Remove paywall copy</h3>
-              <p>Rewrite notices that currently say users must buy Profile Connect.</p>
-            </div>
-            <div class="pcp-step">
-              <span class="pcp-num">3</span>
-              <h3>Keep mapping gated</h3>
-              <p>Leave external table/field mapping in Pro because it depends on Pro helper APIs.</p>
-            </div>
-            <div class="pcp-step">
-              <span class="pcp-num">4</span>
-              <h3>Handle addon conflict</h3>
-              <p>Detect the old addon and avoid double-registering hooks after Free ships the basics.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="pcp-issue-fit" class="pcp-panel" role="tabpanel">
-          <div class="pcp-notice">
-            <h2>Alignment with GitHub issue #1745</h2>
-            <p>This prototype represents the partial Profile Connect in Free path from the issue. It does not represent the default-form fallback path.</p>
-          </div>
-
-          <div class="pcp-grid">
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>In scope</h2>
-                <span class="pcp-badge free">#1745 Option A</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Free users can adopt existing WordPress users by assigning them to a User Registration form.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Admins can assign users in bulk from the Users table.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>Admins can assign or disconnect one user from the profile edit screen.</span></li>
-                <li><i data-lucide="check-circle" aria-hidden="true"></i><span>The Profile Connect upsell is rewritten so Free no longer sells the basic recovery path.</span></li>
-              </ul>
-            </div>
-
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Not included</h2>
-                <span class="pcp-badge pro">Separate scope</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No automatic default-form fallback when <code>ur_form_id</code> is empty.</span></li>
-                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No automatic fallback when a linked registration form is deleted.</span></li>
-                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No external table or external field mapping in Free.</span></li>
-                <li><i data-lucide="x-circle" aria-hidden="true"></i><span>No CSV/import wizard in Free.</span></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="pcp-card" style="margin-top:14px">
-            <div class="pcp-card-header">
-              <h2>Decision wording</h2>
-              <span class="pcp-badge">Use with team</span>
-            </div>
-            <p>Recommended decision: ship a limited Profile Connect feature in Free. This directly addresses the existing-user adoption complaint while keeping advanced migration and mapping workflows in Pro. The deleted-form recovery case gets a manual admin recovery path through reassignment; automatic fallback remains a separate product decision.</p>
-          </div>
-        </section>
-
-        <section id="pcp-current-ui" class="pcp-panel" role="tabpanel">
-          <div class="pcp-notice">
-            <h2>Current verified Free UI</h2>
-            <p>Captured from the local WordPress admin on 2026-10-01. These screenshots are the baseline for the proposal, not mockups.</p>
-          </div>
-
-          <div class="pcp-shot-grid">
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>Registration & Login settings</h2>
-                <p>The navigation already has a Profile Connect subtab in Free, so the proposed Free feature can live in an existing place.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="current-registration-login.png" alt="Current Registration and Login settings screen showing Profile Connect in the settings navigation and an existing non-URM users notice." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>Free plugin version shown in the header is <code>v5.2.8</code>.</li>
-                  <li>The top notice says the site has <code>5</code> users registered before this plugin.</li>
-                  <li>The left settings navigation already exposes <code>Registration & Login > Profile Connect</code>.</li>
-                  <li>This supports replacing the locked subtab content instead of inventing a new admin area.</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>Profile Connect subtab today</h2>
-                <p>The current card sells the full addon around import/source selection and field mapping.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="current-profile-connect-upsell.png" alt="Current Profile Connect settings subtab showing an upsell card with Activate Addon button." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>The card headline is <code>Profile Connect</code> and it is crown-gated.</li>
-                  <li>Current copy: <code>Import users from existing registrations into URM.</code></li>
-                  <li>Current bullets mention selecting forms/sources and mapping fields.</li>
-                  <li>Proposal: Free should show basic assignment here; Pro copy should focus only on advanced mapping/import.</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>Users screen today</h2>
-                <p>The table already shows UR source/form context, but it has no bulk connect action in Free.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="current-users-free-no-connect.png" alt="Current WordPress Users screen showing source column, all sources filter, and no connect with form bulk action." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>There is a <code>Source</code> column with form names or <code>-</code>.</li>
-                  <li>There is an <code>All Sources</code> filter and UR form filter options.</li>
-                  <li>Bulk actions include delete/reset/approval actions, but no connect-to-form action.</li>
-                  <li>Proposal: add <code>Connect with form</code> alongside the existing table workflow.</li>
-                </ul>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section id="pcp-addon-ui" class="pcp-panel" role="tabpanel">
-          <div class="pcp-notice">
-            <h2>Active addon verification</h2>
-            <p>The Profile Connect addon v1.1.3 was installed and activated locally. Re-verified on 2026-10-01: all three addon UI surfaces <strong>are rendering correctly</strong> in the current local stack.</p>
-          </div>
-
-          <div class="pcp-shot-grid">
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>Settings after activating addon — full mapping UI</h2>
-                <p>With addon active and a form selected (<code>ABC Fitness Club Registration</code>), the full <code>Map External Plugin Fields</code> UI renders: External Field Keys column, arrow, and Form Fields dropdown per row.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="active-addon-profile-connect-settings-still-upsell.png" alt="Profile Connect settings screen after activating addon — Map External Plugin Fields card with Select Registration Form set to ABC Fitness Club Registration, Usermeta Table selected, and two field mapping rows showing Input Field and Checkbox." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>Verified with addon <code>User Registration Profile Connect</code> version <code>1.1.3</code> active (Free <code>v6.2.8</code>).</li>
-                  <li><code>Select Registration Form</code> is set to <code>ABC Fitness Club Registration</code>; table source is <code>Usermeta Table</code>.</li>
-                  <li>Two mapping rows render: <strong>External Field Keys</strong> (text input) → arrow → <strong>Form Fields</strong> (dropdown). Rows show <code>Input Field</code> and <code>Checkbox</code> selected. +/− buttons add or remove rows.</li>
-                  <li>The admin notice at top of screen still prompts linking 5 pre-existing users via the Profile Connect addon.</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>Users table after activating addon</h2>
-                <p>With addon active, a <code>Connect with form&hellip;</code> dropdown and <code>Connect</code> button appear in the Users table toolbar.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="active-addon-users-no-connect.png" alt="Users table after activating addon, showing the Connect with form dropdown and Connect button in the toolbar." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>The <code>Connect with form&hellip;</code> dropdown (<code>#new_form</code>) and <code>Connect</code> button are present in the toolbar row.</li>
-                  <li>The toolbar also shows <code>Change role to&hellip;</code>, <code>All approval statuses</code>, and <code>All Sources</code> filters.</li>
-                  <li>13 users are visible; the table includes Source and Status columns added by URM.</li>
-                  <li>This UI should be ported into Free directly, based on the addon&apos;s <code>profile_connect()</code> implementation.</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="pcp-shot">
-              <div class="pcp-shot-head">
-                <h2>User profile after activating addon</h2>
-                <p>With addon active, a <code>Connect To Form</code> select field appears at the bottom of the user profile edit page.</p>
-              </div>
-              <div class="pcp-shot-body">
-                <div class="pcp-shot-frame">
-                  <img src="active-addon-user-profile-no-connect.png" alt="User profile edit screen after activating addon, showing the Connect To Form select field." />
-                </div>
-                <ul class="pcp-facts">
-                  <li>A <code>Connect To Form</code> label and <code>ur_profile_connect</code> select are present at the bottom of the profile edit form.</li>
-                  <li>The select is currently set to <code>None</code> with helper text: &ldquo;Connect this user to form.&rdquo;</li>
-                  <li>The addon&apos;s <code>render_profile_field()</code> hook fires correctly for admins with <code>edit_user</code> capability.</li>
-                  <li>This per-user assignment UI is the key behavior to migrate into Free.</li>
-                </ul>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section id="pcp-free-ui" class="pcp-panel" role="tabpanel">
-          <div class="pcp-wpbox">
-            <div class="pcp-wpbox-title">
-              <h2>Users list: connect selected users</h2>
-              <span class="pcp-badge free">Free feature</span>
-            </div>
-            <div class="pcp-wpbox-body">
-              <div class="pcp-toolbar">
-                <select id="pcp-form-choice" aria-label="Connect selected users to form">
-                  <option value="customer">Customer Onboarding Form</option>
-                  <option value="student">Student Registration Form</option>
-                  <option value="-1">None / disconnect</option>
-                </select>
-                <button class="pcp-button" type="button" id="pcp-connect-btn">Connect</button>
-                <button class="pcp-button secondary" type="button" id="pcp-select-all">Select all shown</button>
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th scope="col">Select</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Current form</th>
-                    <th scope="col">After action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><input type="checkbox" class="pcp-user-check" checked aria-label="Select maya"></td>
-                    <td><span class="pcp-user">maya</span><br><span class="pcp-muted">maya@example.test</span></td>
-                    <td><span class="pcp-status empty">No UR form</span></td>
-                    <td class="pcp-after">Customer Onboarding Form</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" class="pcp-user-check" checked aria-label="Select ravi"></td>
-                    <td><span class="pcp-user">ravi</span><br><span class="pcp-muted">ravi@example.test</span></td>
-                    <td><span class="pcp-status empty">No UR form</span></td>
-                    <td class="pcp-after">Customer Onboarding Form</td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" class="pcp-user-check" aria-label="Select nina"></td>
-                    <td><span class="pcp-user">nina</span><br><span class="pcp-muted">nina@example.test</span></td>
-                    <td><span class="pcp-status">Old Newsletter Form</span></td>
-                    <td class="pcp-after">Unchanged</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="pcp-demo-result" id="pcp-demo-result" aria-live="polite">This action writes <code>ur_form_id</code> for selected users, matching the existing addon behavior.</div>
-            </div>
-          </div>
-
-          <div class="pcp-notice" style="margin-top:14px">
-            <h3>Exact addon behavior to migrate into Free</h3>
-            <p>Bulk connect/disconnect should follow the addon source behavior: selected users, a form dropdown, and a <code>Connect</code> button. Selecting <code>None</code> deletes <code>ur_form_id</code>; selecting a valid User Registration form writes that form ID to <code>ur_form_id</code>.</p>
-          </div>
-
-          <div class="pcp-grid" style="margin-top:14px">
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>User profile edit</h2>
-                <span class="pcp-badge free">Free feature</span>
-              </div>
-              <p>Admins can connect one user to one form with a simple <code>Connect To Form</code> select field.</p>
-              <div class="pcp-toolbar" style="margin-top:12px">
-                <label for="pcp-single-user">Connect To Form</label>
-                <select id="pcp-single-user">
-                  <option>None</option>
-                  <option selected>Customer Onboarding Form</option>
-                  <option>Student Registration Form</option>
-                </select>
-              </div>
-              <p style="margin-top:10px">This mirrors the addon source label and save target, but should be hardened with exact capability and nonce handling before moving into Free.</p>
-            </div>
-
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Settings page copy</h2>
-                <span class="pcp-badge free">Rewrite</span>
-              </div>
-              <p>Instead of an upsell placeholder, Free should explain that basic assignment is available from the Users screen and user profile edit screen.</p>
-              <ul class="pcp-list">
-                <li><i data-lucide="info" aria-hidden="true"></i><span>Do not link to paid Profile Connect for basic adoption.</span></li>
-                <li><i data-lucide="info" aria-hidden="true"></i><span>Use Pro copy only for external data mapping.</span></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section id="pcp-pro-ui" class="pcp-panel" role="tabpanel">
-          <div class="pcp-wpbox">
-            <div class="pcp-wpbox-title">
-              <h2>Profile Connect Pro: advanced mapping</h2>
-              <span class="pcp-badge pro">Keep in Pro</span>
-            </div>
-            <div class="pcp-wpbox-body">
-              <div class="pcp-grid">
-                <div>
-                  <h3>External field mapping</h3>
-                  <p>Map legacy meta keys or external source keys into fields on a chosen User Registration form.</p>
-                  <div class="pcp-toolbar" style="margin-top:12px">
-                    <input type="text" value="billing_phone" aria-label="External field key">
-                    <span>→</span>
-                    <select aria-label="UR field">
-                      <option>Phone</option>
-                      <option>First name</option>
-                      <option>Address</option>
-                    </select>
-                  </div>
-                  <p style="margin-top:10px">Source labels: <code>External Field Keys</code> mapped into <code>Form Fields</code>.</p>
-                </div>
-                <div>
-                  <h3>External table mapping</h3>
-                  <p>Choose a database table plus user id, field key, and field value columns before migrating values.</p>
-                  <div class="pcp-toolbar" style="margin-top:12px">
-                    <select aria-label="Table">
-                      <option>wp_legacy_profiles</option>
-                    </select>
-                    <select aria-label="User id column">
-                      <option>user_id</option>
-                    </select>
-                  </div>
-                  <p style="margin-top:10px">Source settings: table selection, table name, user ID column, field key column, and field value column.</p>
-                </div>
-              </div>
-
-              <div class="pcp-notice" style="margin-top:14px; margin-bottom:0">
-                <h3>Why Pro keeps this</h3>
-                <p>The current addon uses Pro-only DB table helper functions for external source mapping, and this part has higher security/review cost than simply assigning <code>ur_form_id</code>.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="pcp-plan" class="pcp-panel" role="tabpanel">
-          <div class="pcp-notice">
-            <h2>Implementation plan</h2>
-            <p>The implementation plan is written as a task-by-task handoff for engineering review.</p>
-          </div>
-
-          <div class="pcp-grid">
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Primary work</h2>
-                <span class="pcp-badge free">Free plugin</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="list-checks" aria-hidden="true"></i><span>Extract and harden basic connect/disconnect workflows from the addon.</span></li>
-                <li><i data-lucide="shield-check" aria-hidden="true"></i><span>Use nonce checks, exact capabilities, valid form checks, and sanitized redirects.</span></li>
-                <li><i data-lucide="panel-top" aria-hidden="true"></i><span>Replace the Profile Connect upsell with Free assignment guidance and Pro mapping upsell.</span></li>
-                <li><i data-lucide="bell-off" aria-hidden="true"></i><span>Rewrite notices so they no longer sell the basic adoption path.</span></li>
-              </ul>
-            </div>
-
-            <div class="pcp-card">
-              <div class="pcp-card-header">
-                <h2>Review risks</h2>
-                <span class="pcp-badge pro">Needs care</span>
-              </div>
-              <ul class="pcp-list">
-                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not load the old addon hooks twice if the separate addon is active.</span></li>
-                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not move external table SQL into Free without a separate security pass.</span></li>
-                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not change direct <code>ur_form_id</code> readers unless the scope expands beyond assignment.</span></li>
-                <li><i data-lucide="alert-triangle" aria-hidden="true"></i><span>Do not call this default-form fallback; it is a different option from the issue.</span></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="pcp-card" style="margin-top:14px">
-            <div class="pcp-card-header">
-              <h2>Plan document</h2>
-              <span class="pcp-badge">Markdown</span>
-            </div>
-            <p><a href="plan.md">Open the implementation plan</a></p>
-          </div>
-        </section>
-
-        <section id="pcp-evidence" class="pcp-panel" role="tabpanel">
-          <div class="pcp-card">
-            <div class="pcp-card-header">
-              <h2>Verified source evidence</h2>
-              <span class="pcp-badge">Checked locally</span>
-            </div>
-            <div class="pcp-source">
-              <div class="pcp-source-row">
-                <strong>Addon bootstrap</strong>
-                <span>Separate plugin, version <code>1.1.3</code>, tested up to Pro <code>6.0</code>: <code>user-registration-profile-connect/user-registration-profile-connect.php:3-39</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Current Pro requirement</strong>
-                <span>Bootstrap checks for active <code>user-registration-pro/user-registration.php</code>: <code>includes/class-user-registration-profile-connect.php:39-58</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Bulk connect UI</strong>
-                <span>Users-table dropdown and Connect button: <code>includes/class-user-registration-profile-connect-process.php:57-78</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Bulk connect behavior</strong>
-                <span>Selected users get <code>ur_form_id</code> updated or deleted: <code>includes/class-user-registration-profile-connect-process.php:84-176</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Single user connect</strong>
-                <span>User profile select field and save behavior: <code>includes/class-user-registration-profile-connect-process.php:204-297</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Advanced mapping</strong>
-                <span>External field/table mapping settings: <code>includes/settings/class-user-registration-profile-connect-settings.php:224-318</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Pro-only helpers</strong>
-                <span><code>user_registration_get_all_db_tables()</code> and <code>user_registration_get_columns_by_table()</code> are in Pro: <code>user-registration-pro/includes/pro/functions-ur-pro.php:1115-1138</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Current free upsell</strong>
-                <span>Free currently treats <code>profile-connect</code> as an upgrade setting: <code>includes/admin/settings/class-ur-settings-registration-login.php:45-69</code></span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Live admin check (Free only)</strong>
-                <span>Verified in local WordPress admin on 2026-10-01: Free <code>v5.2.8</code> without addon shows a Profile Connect upsell card and the Users table has no connect-to-form action.</span>
-              </div>
-              <div class="pcp-source-row">
-                <strong>Active addon check</strong>
-                <span>Re-verified on 2026-10-01 with addon <code>1.1.3</code> active: all three UI surfaces <strong>are rendering correctly</strong> — (1) <code>Map External Plugin Fields</code> card appears in settings, (2) <code>Connect with form&hellip;</code> dropdown + <code>Connect</code> button appear in the Users toolbar, (3) <code>Connect To Form</code> select appears at bottom of user profile edit page.</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+    <div class="proto-switcher-modes">
+      <button class="proto-btn active" id="btn-mode-dashboard" onclick="switchView('dashboard')">1. Dashboard (Notice Trigger)</button>
+      <button class="proto-btn" id="btn-mode-pro" onclick="switchView('settings-pro')">2. Settings Page (Pro Addon Active)</button>
+      <button class="proto-btn" id="btn-mode-free" onclick="switchView('settings-free')">3. Settings Page (Free Version with Teaser)</button>
     </div>
   </div>
 
+  <!-- Top Admin Bar -->
+  <div class="wp-topbar">
+    <div><strong>Masteriyo Local</strong> &rsaquo; WordPress 6.x</div>
+    <div>Howdy, admin</div>
+  </div>
+
+  <div class="wp-wrap">
+    <!-- Left Core WP Menu -->
+    <div class="wp-admin-sidebar">
+      <div class="wp-admin-menu-item" id="menu-dash" onclick="switchView('dashboard')">Dashboard</div>
+      <div class="wp-admin-menu-item">Users</div>
+      <div class="wp-admin-menu-item active" id="menu-ur" onclick="switchView('settings-pro')">User Registration</div>
+      <div class="wp-admin-menu-item" style="padding-left: 24px; font-size: 12px; color: #72aee6;">Settings</div>
+      <div class="wp-admin-menu-item">Plugins</div>
+      <div class="wp-admin-menu-item">Settings</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: DASHBOARD (Notice visible here)   -->
+    <!-- ========================================== -->
+    <div class="view-screen active" id="view-dashboard">
+      <div class="dashboard-wrap">
+        <div class="dashboard-header">
+          <h1>Dashboard</h1>
+        </div>
+
+        <!-- The Core Admin Notice displayed here on dashboard / non-connect pages -->
+        <div class="notice notice-info">
+          <p>
+            <strong>User Registration & Membership:</strong> Your site has <strong>10,240 users</strong> registered before this plugin was installed.
+            Want them to enjoy the new frontend profile features too?
+            <a onclick="switchView('settings-pro')" style="color: var(--ur-primary); font-weight: 700; margin-left: 4px;">Connect Existing Users &rarr;</a>
+          </p>
+        </div>
+
+        <div style="background: #fff; padding: 40px; border: 1px solid var(--ur-border); border-radius: 4px; color: #64748b;">
+          <h3>WordPress Welcome Dashboard Widget</h3>
+          <p style="margin-top: 8px;">(User completed setup wizard and arrived here. Notice above guides them straight to Profile Connect).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================== -->
+    <!-- VIEW 2: SETTINGS (PRO ADDON ACTIVE)                 -->
+    <!-- Top notice is NOT duplicated here!                  -->
+    <!-- =================================================== -->
+    <div class="view-screen" id="view-settings-pro">
+      <div class="user-registration-settings-wrapper">
+        
+        <!-- Left UR Settings Nav -->
+        <div class="user-registration-header">
+          <div class="ur-nav__link">General</div>
+          <div class="ur-nav__link is-active">
+            <span>Registration & Login</span>
+          </div>
+          <ul class="ur-subsubsub">
+            <li><a href="#">Messages</a></li>
+            <li><a href="#">Captcha</a></li>
+            <li class="current"><a href="#">Profile Connect</a></li>
+            <li><a href="#">Invite Codes</a></li>
+          </ul>
+          <div class="ur-nav__link">Email</div>
+          <div class="ur-nav__link">Membership</div>
+          <div class="ur-nav__link">Advanced</div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="user-registration-settings-container">
+          
+          <div class="user-registration-options-header--top">
+            <h3>Profile Connect</h3>
+          </div>
+
+          <!-- SAFETY BANNER -->
+          <div class="ur-safety-banner">
+            <strong>🔒 100% Safe & Non-Destructive:</strong> Connecting users will <strong>never delete</strong> any user accounts, passwords, or existing metadata. It only links accounts to your chosen User Registration form and safely copies mapped values.
+          </div>
+
+          <!-- CARD 1: FIELD MAPPING (PRO) -->
+          <div class="user-registration-card">
+            <div class="user-registration-card__header">
+              <h4 class="user-registration-card__title">Profile Field Mapping (Optional)</h4>
+              <div class="user-registration-card__desc">
+                Copy existing user profile data from other sources into your User Registration form fields upon connection.
+              </div>
+            </div>
+
+            <!-- ONE-TIME EXPLANATION -->
+            <div class="ur-info-callout">
+              <p style="margin-bottom: 6px;"><strong>⚡ How field mapping works:</strong></p>
+              <ul style="padding-left: 18px; margin: 0; line-height: 1.6;">
+                <li><strong>One-time copy:</strong> When you connect users, the values from your source keys are copied once into their User Registration profile. Existing data in your source keys is <strong>never deleted or modified</strong>.</li>
+                <li><strong>Optional:</strong> If you only want users to have access to the form without copying legacy metadata, you can leave field mappings empty.</li>
+              </ul>
+            </div>
+
+            <table class="form-table-ur">
+              <tbody>
+                <tr>
+                  <th><label for="reg-form">Select Registration Form</label></th>
+                  <td>
+                    <select id="reg-form" class="ur-enhanced-select">
+                      <option value="102" selected>Standard Member Registration (ID: 102)</option>
+                      <option value="88">VIP Member Profile Form (ID: 88)</option>
+                    </select>
+                    <div class="description-tip">The User Registration form whose fields and frontend profile layout these users will receive.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <th><label for="table-source">Select Table From Where You Want to Fetch Data of Selected Fields</label></th>
+                  <td>
+                    <select id="table-source" class="ur-enhanced-select" onchange="toggleExternalTableRows(this.value)">
+                      <option value="usermeta_table">Usermeta Table</option>
+                      <option value="external_table" selected>External Table</option>
+                    </select>
+                    <div class="description-tip">Select table from where you want to fetch data of selected fields.</div>
+                  </td>
+                </tr>
+
+                <!-- Full External Table Dynamic Schema Fields Matching Real Plugin -->
+                <tr class="ur-external-table-row" id="row-table-name">
+                  <th><label for="table-name">Table Name</label></th>
+                  <td>
+                    <select id="table-name" class="ur-enhanced-select">
+                      <option value="wp_actionscheduler_actions" selected>wp_actionscheduler_actions</option>
+                      <option value="wp_posts">wp_posts</option>
+                      <option value="wp_postmeta">wp_postmeta</option>
+                      <option value="wp_options">wp_options</option>
+                      <option value="wp_custom_profiles">wp_custom_profiles</option>
+                    </select>
+                    <div class="description-tip">Database table containing external user data.</div>
+                  </td>
+                </tr>
+                <tr class="ur-external-table-row" id="row-col-user-id">
+                  <th><label for="col-user-id">Column for User ID</label></th>
+                  <td>
+                    <select id="col-user-id" class="ur-enhanced-select">
+                      <option value="">-- Select Column --</option>
+                      <option value="user_id" selected>user_id</option>
+                      <option value="ID">ID</option>
+                      <option value="customer_id">customer_id</option>
+                    </select>
+                    <div class="description-tip">Column that identifies the user account.</div>
+                  </td>
+                </tr>
+                <tr class="ur-external-table-row" id="row-col-field-key">
+                  <th><label for="col-field-key">Column for Field Key</label></th>
+                  <td>
+                    <select id="col-field-key" class="ur-enhanced-select">
+                      <option value="">-- Select Column --</option>
+                      <option value="meta_key" selected>meta_key</option>
+                      <option value="field_name">field_name</option>
+                      <option value="key">key</option>
+                    </select>
+                    <div class="description-tip">Column storing the data attribute name.</div>
+                  </td>
+                </tr>
+                <tr class="ur-external-table-row" id="row-col-field-value">
+                  <th><label for="col-field-value">Column for Field Value</label></th>
+                  <td>
+                    <select id="col-field-value" class="ur-enhanced-select">
+                      <option value="">-- Select Column --</option>
+                      <option value="meta_value" selected>meta_value</option>
+                      <option value="field_value">field_value</option>
+                      <option value="value">value</option>
+                    </select>
+                    <div class="description-tip">Column containing the actual value to copy.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Field Mapping Rules</th>
+                  <td>
+                    <ul class="ur-profile-connect-field-mapping-box" id="mapping-list">
+                      <li class="ur-profile-connect-mapping-header">
+                        <div>Existing Meta Key (Source)</div>
+                        <div></div>
+                        <div>Form Field (Destination)</div>
+                        <div>Action</div>
+                      </li>
+                      <li class="ur-profile-connect-external-field-map-group">
+                        <input type="text" class="ur-text-input" style="min-width: 100%;" value="billing_phone" placeholder="Enter meta key">
+                        <div class="ur-profile-connect-operator">&rarr;</div>
+                        <select class="ur-enhanced-select" style="min-width: 100%;">
+                          <option selected>Phone Number (phone_102)</option>
+                          <option>First Name (first_name)</option>
+                        </select>
+                        <div class="ur-profile-connect-mapping-action">
+                          <span class="add" onclick="addRow()">+</span>
+                          <span class="remove" onclick="removeRow(this)">&minus;</span>
+                        </div>
+                      </li>
+                      <li class="ur-profile-connect-external-field-map-group">
+                        <input type="text" class="ur-text-input" style="min-width: 100%;" value="billing_address_1" placeholder="Enter meta key">
+                        <div class="ur-profile-connect-operator">&rarr;</div>
+                        <select class="ur-enhanced-select" style="min-width: 100%;">
+                          <option>Phone Number (phone_102)</option>
+                          <option selected>Street Address (address_102)</option>
+                        </select>
+                        <div class="ur-profile-connect-mapping-action">
+                          <span class="add" onclick="addRow()">+</span>
+                          <span class="remove" onclick="removeRow(this)">&minus;</span>
+                        </div>
+                      </li>
+                    </ul>
+                    <div class="description-tip">Specify which existing meta keys should populate your form fields upon connection.</div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Conflict Safety</th>
+                  <td>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                      <input type="checkbox" id="only-empty" checked>
+                      Only copy into empty fields (Never overwrite existing User Registration profile edits)
+                    </label>
+                    <div class="description-tip">If checked, values already entered or edited inside User Registration are protected and preserved.</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--ur-border);">
+              <button class="button-primary" onclick="alert('Mapping rules saved!')">Save Mapping Rules</button>
+            </div>
+          </div>
+
+          <!-- CARD 2: CONNECT USERS WITH STEP-BY-STEP GUIDANCE -->
+          <div class="user-registration-card">
+            <div class="user-registration-card__header">
+              <h4 class="user-registration-card__title">Connect Existing Users</h4>
+              <div class="user-registration-card__desc">
+                Assign the selected form to existing accounts so they can view and edit their profiles.
+              </div>
+            </div>
+
+            <!-- COHORT OPTIONS WITH MANUAL INSTRUCTIONS -->
+            <div class="ur-filter-box">
+              <label style="font-weight: 600; display: block; margin-bottom: 10px; color: var(--ur-text-heading);">Choose which users to connect:</label>
+              
+              <label class="ur-radio-option" id="opt-all" onclick="selectCohort('all')">
+                <input type="radio" name="connect_cohort" id="cohort-all" value="all" checked>
+                <div>
+                  <strong>All Unlinked Users</strong>
+                  <div style="color: #64748b; font-size: 12px;">Connects all 10,240 users currently missing a User Registration form.</div>
+                </div>
+              </label>
+
+              <label class="ur-radio-option" id="opt-role" onclick="selectCohort('role')">
+                <input type="radio" name="connect_cohort" id="cohort-role" value="role">
+                <div style="width: 100%;">
+                  <strong>Filter by Role</strong>
+                  <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">Connect only unlinked users with a specific role.</div>
+                  
+                  <div id="role-select-wrap" style="display: none;" onclick="event.stopPropagation()">
+                    <select id="cohort-role-select" class="ur-enhanced-select" style="min-width: 280px;" onchange="updateFilteredCount(this.value)">
+                      <option value="customer" selected>Customer (8,420 unlinked)</option>
+                      <option value="subscriber">Subscriber (1,680 unlinked)</option>
+                      <option value="author">Author (140 unlinked)</option>
+                    </select>
+                  </div>
+                </div>
+              </label>
+
+              <label class="ur-radio-option" id="opt-manual" onclick="selectCohort('manual')">
+                <input type="radio" name="connect_cohort" id="cohort-manual" value="manual">
+                <div>
+                  <strong>Select Individual Users</strong>
+                  <div style="color: #64748b; font-size: 12px;">Choose specific users manually from the All Users table.</div>
+                  
+                  <div id="manual-users-wrap" style="display: none; margin-top: 12px;" onclick="event.stopPropagation()">
+                    <div style="background: #ffffff; border: 1px solid var(--ur-border); border-left: 3px solid var(--ur-primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
+                      <strong style="color: var(--ur-text-heading); font-size: 13px; display: block; margin-bottom: 6px;">How to connect specific users:</strong>
+                      <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569; line-height: 1.6;">
+                        <li>Open the <strong>All Users</strong> screen.</li>
+                        <li>Select the users you want to link using the checkboxes.</li>
+                        <li>In the toolbar dropdown above the list, select <strong>Connect with form&hellip;</strong> and choose your form.</li>
+                        <li>Click <strong>Connect</strong> to link them.</li>
+                      </ol>
+                      <div style="margin-top: 8px; font-size: 12px; color: #64748b; font-style: italic;">
+                        Tip: You can use the search bar or role filter above the users table to quickly locate specific accounts.
+                      </div>
+                    </div>
+                    <a href="users.php" class="button-primary" target="_blank" onclick="alert('Opens All Users screen (users.php)')">
+                      Go to All Users &rarr;
+                    </a>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <!-- Dynamic Status Bar for Bulk Execution -->
+            <div id="bulk-connect-status-pane" style="margin-bottom: 16px; padding: 10px 14px; background: #f0f7ff; border-left: 3px solid var(--ur-primary); border-radius: 3px;">
+              <div style="font-size: 13px; color: var(--ur-text-heading);">
+                Ready to connect <strong id="unlinked-count" style="color: var(--ur-primary); font-size: 14px;">10,240 unlinked users</strong>.
+              </div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                Processed safely in background batches of 50 accounts.
+              </div>
+            </div>
+
+            <!-- Action Area -->
+            <div id="bulk-connect-action-pane">
+              <button class="button-primary" id="btn-run-connect" onclick="runBatchConnection()">
+                Connect 10,240 Users
+              </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="ur-batch-progress-wrapper" id="batch-progress-wrapper">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 600; color: #1e293b;" id="batch-step-text">
+                  <span class="ur-spinner"></span> Connecting accounts in batches (Batch 1 of 205)...
+                </span>
+                <span style="font-weight: 700; color: var(--ur-primary);" id="batch-percent-text">0%</span>
+              </div>
+              
+              <div class="ur-batch-progress-bar-bg">
+                <div class="ur-batch-progress-bar-fill" id="batch-bar-fill"></div>
+              </div>
+
+              <div class="ur-batch-status-row">
+                <span id="batch-processed-count">0 of 10,240 users processed</span>
+                <span>Memory safe &bull; Server timeout protected</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================== -->
+    <!-- VIEW 3: SETTINGS (FREE VERSION WITH TEASER OVERLAY) -->
+    <!-- Free user sees working assignment + sexy Pro teaser -->
+    <!-- =================================================== -->
+    <div class="view-screen" id="view-settings-free">
+      <div class="user-registration-settings-wrapper">
+        
+        <!-- Left UR Settings Nav -->
+        <div class="user-registration-header">
+          <div class="ur-nav__link">General</div>
+          <div class="ur-nav__link is-active">
+            <span>Registration & Login</span>
+          </div>
+          <ul class="ur-subsubsub">
+            <li><a href="#">Messages</a></li>
+            <li><a href="#">Captcha</a></li>
+            <li class="current"><a href="#">Profile Connect</a></li>
+            <li><a href="#">Invite Codes</a></li>
+          </ul>
+          <div class="ur-nav__link">Email</div>
+          <div class="ur-nav__link">Membership</div>
+          <div class="ur-nav__link">Advanced</div>
+        </div>
+
+        <div class="user-registration-settings-container">
+          
+          <div class="user-registration-options-header--top">
+            <h3>Profile Connect</h3>
+          </div>
+
+          <!-- FREE TIER: UNIFIED PRO TEASER CARD (EXACT PROJECT STANDARD) -->
+          <div class="user-registration-card pro-options" style="position: relative; opacity: 0.85;">
+            <div class="user-registration-card__header" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <h4 class="user-registration-card__title" style="display: flex; align-items: center; gap: 8px;">
+                  Profile Connect
+                  <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">PRO</span>
+                </h4>
+                <div class="user-registration-card__desc">
+                  Connect existing WordPress users to registration forms and automatically map their profile metadata.
+                </div>
+              </div>
+              <div>
+                <a href="https://wpuserregistration.com/features/profile-connect/" target="_blank" class="button-primary" style="background: #475bb2 !important;">
+                  Upgrade to Pro &rarr;
+                </a>
+              </div>
+            </div>
+
+            <!-- Standard Disabled Form Controls Matching URM Native Free View -->
+            <fieldset disabled style="border: none; padding: 0; margin: 0; cursor: not-allowed;">
+              <table class="form-table-ur">
+                <tbody>
+                  <tr>
+                    <th><label>Select Registration Form</label></th>
+                    <td>
+                      <select class="ur-enhanced-select" disabled style="background: #f8fafc; cursor: not-allowed;">
+                        <option>Standard Member Registration (ID: 102)</option>
+                      </select>
+                      <div class="description-tip">The form whose profile fields will be assigned to external users.</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><label>Select Table From Where You Want to Fetch Data of Selected Fields</label></th>
+                    <td>
+                      <select class="ur-enhanced-select" disabled style="background: #f8fafc; cursor: not-allowed;">
+                        <option>Usermeta Table</option>
+                        <option selected>External Table</option>
+                      </select>
+                      <div class="description-tip">Select table from where you want to fetch data of selected fields.</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Field Mapping Rules</th>
+                    <td>
+                      <ul class="ur-profile-connect-field-mapping-box">
+                        <li class="ur-profile-connect-mapping-header">
+                          <div>Existing Meta Key (Source)</div>
+                          <div></div>
+                          <div>Form Field (Destination)</div>
+                          <div>Action</div>
+                        </li>
+                        <li class="ur-profile-connect-external-field-map-group" style="background: #f1f5f9;">
+                          <input type="text" class="ur-text-input" value="billing_phone" disabled style="min-width: 100%; background: #fff; cursor: not-allowed;">
+                          <div class="ur-profile-connect-operator">&rarr;</div>
+                          <select class="ur-enhanced-select" disabled style="min-width: 100%; cursor: not-allowed;">
+                            <option>Phone Number (phone_102)</option>
+                          </select>
+                          <div class="ur-profile-connect-mapping-action">
+                            <span style="opacity: 0.5; cursor: not-allowed;">+</span>
+                            <span style="opacity: 0.5; cursor: not-allowed;">&minus;</span>
+                          </div>
+                        </li>
+                        <li class="ur-profile-connect-external-field-map-group" style="background: #f1f5f9;">
+                          <input type="text" class="ur-text-input" value="billing_address_1" disabled style="min-width: 100%; background: #fff; cursor: not-allowed;">
+                          <div class="ur-profile-connect-operator">&rarr;</div>
+                          <select class="ur-enhanced-select" disabled style="min-width: 100%; cursor: not-allowed;">
+                            <option>Street Address (address_102)</option>
+                          </select>
+                          <div class="ur-profile-connect-mapping-action">
+                            <span style="opacity: 0.5; cursor: not-allowed;">+</span>
+                            <span style="opacity: 0.5; cursor: not-allowed;">&minus;</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Conflict Safety</th>
+                    <td>
+                      <label style="display: flex; align-items: center; gap: 8px; color: #64748b; cursor: not-allowed;">
+                        <input type="checkbox" checked disabled>
+                        Only copy into empty fields (Prevent overwriting existing User Registration profile edits)
+                      </label>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--ur-border); display: flex; align-items: center; gap: 12px;">
+                <button class="button-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Save Mapping Rules</button>
+                <span style="color: #64748b; font-size: 12px;">Field mapping requires the Profile Connect Addon.</span>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- FREE TIER: CONNECT USERS CARD (1st & 2nd options PRO, 3rd option FREE & ACTIVE) -->
+          <div class="user-registration-card">
+            <div class="user-registration-card__header">
+              <h4 class="user-registration-card__title">Connect Existing Users</h4>
+              <div class="user-registration-card__desc">
+                Assign accounts to a User Registration form so they can view and edit their profiles.
+              </div>
+            </div>
+
+            <div class="ur-filter-box">
+              <label style="font-weight: 600; display: block; margin-bottom: 10px; color: var(--ur-text-heading);">Choose which users to connect:</label>
+              
+              <!-- 1. All Unlinked (PRO) -->
+              <label class="ur-radio-option" style="opacity: 0.7; cursor: not-allowed;">
+                <input type="radio" name="connect_cohort_free" disabled>
+                <div>
+                  <strong style="display: flex; align-items: center; gap: 8px;">
+                    All Unlinked Users
+                    <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">PRO</span>
+                  </strong>
+                  <div style="color: #64748b; font-size: 12px;">Automated 1-click batch connection of all 10,240 accounts. Available in Pro.</div>
+                </div>
+              </label>
+
+              <!-- 2. Filter by Role (PRO) -->
+              <label class="ur-radio-option" style="opacity: 0.7; cursor: not-allowed;">
+                <input type="radio" name="connect_cohort_free" disabled>
+                <div>
+                  <strong style="display: flex; align-items: center; gap: 8px;">
+                    Filter by Role
+                    <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">PRO</span>
+                  </strong>
+                  <div style="color: #64748b; font-size: 12px;">Connect specific role cohorts (e.g. Customers, Subscribers). Available in Pro.</div>
+                </div>
+              </label>
+
+              <!-- 3. Select Individual Users (ACTIVE & AVAILABLE IN FREE) -->
+              <label class="ur-radio-option" style="border-color: var(--ur-primary); background: #f8faff;">
+                <input type="radio" name="connect_cohort_free" checked>
+                <div>
+                  <strong>Select Individual Users (Available)</strong>
+                  <div style="color: #64748b; font-size: 12px;">Choose specific users manually from the All Users table.</div>
+                  
+                  <div style="margin-top: 12px;">
+                    <div style="background: #ffffff; border: 1px solid var(--ur-border); border-left: 3px solid var(--ur-primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
+                      <strong style="color: var(--ur-text-heading); font-size: 13px; display: block; margin-bottom: 6px;">How to connect specific users:</strong>
+                      <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569; line-height: 1.6;">
+                        <li>Open the <strong>All Users</strong> screen.</li>
+                        <li>Select the users you want to link using the checkboxes.</li>
+                        <li>In the toolbar dropdown above the list, select <strong>Connect with form&hellip;</strong> and choose your form.</li>
+                        <li>Click <strong>Connect</strong> to link them.</li>
+                      </ol>
+                      <div style="margin-top: 8px; font-size: 12px; color: #64748b; font-style: italic;">
+                        Tip: You can use the search bar or role filter above the users table to quickly locate specific accounts.
+                      </div>
+                    </div>
+                    <a href="users.php" class="button-primary" target="_blank" onclick="alert('Opens All Users screen (users.php)')">
+                      Go to All Users &rarr;
+                    </a>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--ur-border); display: flex; align-items: center; justify-content: space-between;">
+              <span style="color: #64748b; font-size: 12px;">
+                Want automated 1-click bulk connection for all 10,240 users?
+              </span>
+              <a href="https://wpuserregistration.com/features/profile-connect/" target="_blank" class="button-secondary" style="font-weight: 600;">
+                Get Profile Connect Pro &rarr;
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <script>
-    (() => {
-      const root = document.getElementById('profile-connect-prototype');
-      const tabs = [...root.querySelectorAll('.pcp-tab')];
-      const panels = [...root.querySelectorAll('.pcp-panel')];
+    let activeTotal = 10240;
 
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
-          panels.forEach((panel) => panel.classList.toggle('active', panel.id === tab.dataset.panel));
-        });
+    function switchView(mode) {
+      document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.proto-btn').forEach(btn => btn.classList.remove('active'));
+
+      if (mode === 'dashboard') {
+        document.getElementById('view-dashboard').classList.add('active');
+        document.getElementById('btn-mode-dashboard').classList.add('active');
+        document.getElementById('menu-dash').classList.add('active');
+        document.getElementById('menu-ur').classList.remove('active');
+      } else if (mode === 'settings-pro') {
+        document.getElementById('view-settings-pro').classList.add('active');
+        document.getElementById('btn-mode-pro').classList.add('active');
+        document.getElementById('menu-dash').classList.remove('active');
+        document.getElementById('menu-ur').classList.add('active');
+      } else if (mode === 'settings-free') {
+        document.getElementById('view-settings-free').classList.add('active');
+        document.getElementById('btn-mode-free').classList.add('active');
+        document.getElementById('menu-dash').classList.remove('active');
+        document.getElementById('menu-ur').classList.add('active');
+      }
+    }
+
+    function selectCohort(type) {
+      document.getElementById('cohort-' + type).checked = true;
+      toggleCohortFilter(type);
+    }
+
+    function toggleCohortFilter(type) {
+      document.getElementById('role-select-wrap').style.display = (type === 'role') ? 'block' : 'none';
+      document.getElementById('manual-users-wrap').style.display = (type === 'manual') ? 'block' : 'none';
+      
+      const statusPane = document.getElementById('bulk-connect-status-pane');
+      const actionPane = document.getElementById('bulk-connect-action-pane');
+      const btn = document.getElementById('btn-run-connect');
+
+      if (type === 'all') {
+        activeTotal = 10240;
+        statusPane.style.display = 'block';
+        actionPane.style.display = 'block';
+        document.getElementById('unlinked-count').textContent = '10,240 unlinked users';
+        btn.textContent = 'Connect 10,240 Users';
+      } else if (type === 'role') {
+        statusPane.style.display = 'block';
+        actionPane.style.display = 'block';
+        updateFilteredCount(document.getElementById('cohort-role-select').value);
+      } else if (type === 'manual') {
+        statusPane.style.display = 'none';
+        actionPane.style.display = 'none';
+      }
+    }
+
+    function updateFilteredCount(role) {
+      const counts = { customer: 8420, subscriber: 1680, author: 140 };
+      activeTotal = counts[role] || 1000;
+      document.getElementById('unlinked-count').textContent = activeTotal.toLocaleString() + ' unlinked users (' + role + ')';
+      document.getElementById('btn-run-connect').textContent = 'Connect ' + activeTotal.toLocaleString() + ' ' + role.charAt(0).toUpperCase() + role.slice(1) + 's';
+    }
+
+    function addRow() {
+      const list = document.getElementById('mapping-list');
+      const item = document.createElement('li');
+      item.className = 'ur-profile-connect-external-field-map-group';
+      item.innerHTML = `
+        <input type="text" class="ur-text-input" style="min-width: 100%;" placeholder="Enter meta key">
+        <div class="ur-profile-connect-operator">&rarr;</div>
+        <select class="ur-enhanced-select" style="min-width: 100%;">
+          <option>-- Select Form Field --</option>
+          <option>Phone Number (phone_102)</option>
+          <option>Street Address (address_102)</option>
+        </select>
+        <div class="ur-profile-connect-mapping-action">
+          <span class="add" onclick="addRow()">+</span>
+          <span class="remove" onclick="removeRow(this)">&minus;</span>
+        </div>
+      `;
+      list.appendChild(item);
+    }
+
+    function toggleExternalTableRows(value) {
+      const isExternal = (value === 'external_table');
+      document.querySelectorAll('.ur-external-table-row').forEach(row => {
+        row.style.display = isExternal ? 'table-row' : 'none';
       });
+    }
 
-      const formChoice = root.querySelector('#pcp-form-choice');
-      const afterCells = [...root.querySelectorAll('.pcp-after')];
-      const checks = [...root.querySelectorAll('.pcp-user-check')];
-      const result = root.querySelector('#pcp-demo-result');
-      const labels = {
-        customer: 'Customer Onboarding Form',
-        student: 'Student Registration Form',
-        '-1': 'None / disconnected'
-      };
+    function removeRow(btn) {
+      const rows = document.querySelectorAll('.ur-profile-connect-external-field-map-group');
+      if (rows.length > 1) {
+        btn.closest('.ur-profile-connect-external-field-map-group').remove();
+      }
+    }
 
-      function updatePreview(message) {
-        checks.forEach((checkbox, index) => {
-          afterCells[index].textContent = checkbox.checked ? labels[formChoice.value] : 'Unchanged';
-        });
-        if (message) {
-          result.textContent = message;
+    function runBatchConnection() {
+      const totalUsers = activeTotal;
+      const btn = document.getElementById('btn-run-connect');
+      const wrapper = document.getElementById('batch-progress-wrapper');
+      const fill = document.getElementById('batch-bar-fill');
+      const percentText = document.getElementById('batch-percent-text');
+      const stepText = document.getElementById('batch-step-text');
+      const processedCount = document.getElementById('batch-processed-count');
+      const unlinkedCount = document.getElementById('unlinked-count');
+
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      wrapper.style.display = 'block';
+
+      const batchSize = Math.max(50, Math.floor(totalUsers / 20));
+      let processed = 0;
+      let batchNum = 1;
+      const totalBatches = Math.ceil(totalUsers / batchSize);
+
+      const interval = setInterval(() => {
+        processed += batchSize;
+        if (processed >= totalUsers) {
+          processed = totalUsers;
+          clearInterval(interval);
         }
-      }
 
-      formChoice.addEventListener('change', () => {
-        updatePreview('Preview updated. Selected users will be set to "' + labels[formChoice.value] + '".');
-      });
+        const pct = Math.round((processed / totalUsers) * 100);
+        fill.style.width = pct + '%';
+        percentText.textContent = pct + '%';
+        processedCount.textContent = processed.toLocaleString() + ' of ' + totalUsers.toLocaleString() + ' users processed';
+        stepText.innerHTML = '<span class="ur-spinner"></span> Connecting Batch ' + batchNum + ' of ' + totalBatches + '...';
+        batchNum++;
 
-      checks.forEach((checkbox) => {
-        checkbox.addEventListener('change', () => updatePreview('Selection updated.'));
-      });
-
-      root.querySelector('#pcp-select-all').addEventListener('click', () => {
-        checks.forEach((checkbox) => {
-          checkbox.checked = true;
-        });
-        updatePreview('All shown users selected.');
-      });
-
-      root.querySelector('#pcp-connect-btn').addEventListener('click', () => {
-        const selected = checks.filter((checkbox) => checkbox.checked).length;
-        const action = formChoice.value === '-1' ? 'disconnected from UR forms' : 'connected to ' + labels[formChoice.value];
-        result.textContent = selected + ' selected user(s) would be ' + action + '.';
-      });
-
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
-      }
-    })();
+        if (processed === totalUsers) {
+          stepText.innerHTML = '<span style="color: #008a20; font-weight: 600;">✅ Success: All ' + totalUsers.toLocaleString() + ' users successfully connected to Standard Registration Form!</span>';
+          unlinkedCount.textContent = '0 unlinked users';
+          btn.textContent = 'All Users Connected';
+        }
+      }, 250);
+    }
   </script>
-</div>
+</body>
+</html>
