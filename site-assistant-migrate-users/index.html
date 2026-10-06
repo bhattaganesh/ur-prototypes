@@ -434,31 +434,11 @@
                 </select>
               </div>
 
-              <!-- Live Batch Progress Box -->
-              <div class="progress-box" id="migrate-progress-box">
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--ur-text-heading);">
-                  <span id="progress-status-text"><span class="spinner"></span> Migrating accounts in batches...</span>
-                  <span id="progress-percent" style="color: var(--ur-primary);">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                  <div class="progress-bar-fill" id="progress-bar-fill"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--ur-text-muted);">
-                  <span id="progress-count-text">0 of 10,240 users processed</span>
-                  <span>Safe batch execution &bull; Zero timeouts</span>
-                </div>
-              </div>
-
               <!-- Action Footer -->
               <div class="step-actions" id="migrate-actions-bar">
-                <div>
-                  <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
-                    Migrate 10,240 Users
-                  </button>
-                  <div class="reassurance-note">
-                    🔒 Processed safely in small batches to prevent server timeouts.
-                  </div>
-                </div>
+                <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
+                  Migrate 10,240 Users
+                </button>
 
                 <button class="skip-link" onclick="skipMigration()">
                   Skip this step
@@ -549,39 +529,13 @@
       isMigrating = true;
 
       const btn = document.getElementById('btn-migrate-action');
-      const progressBox = document.getElementById('migrate-progress-box');
-      const fill = document.getElementById('progress-bar-fill');
-      const percent = document.getElementById('progress-percent');
-      const countText = document.getElementById('progress-count-text');
-      const statusText = document.getElementById('progress-status-text');
-
       btn.disabled = true;
-      btn.style.opacity = '0.5';
-      progressBox.style.display = 'block';
+      btn.innerHTML = '<span class="spinner"></span> Migrating...';
 
-      const total = unlinkedCount;
-      const chunkSize = Math.max(50, Math.floor(total / 15));
-      let current = 0;
-
-      const interval = setInterval(() => {
-        current += chunkSize;
-        if (current >= total) {
-          current = total;
-          clearInterval(interval);
-        }
-
-        const pct = Math.round((current / total) * 100);
-        fill.style.width = pct + '%';
-        percent.textContent = pct + '%';
-        countText.textContent = current.toLocaleString() + ' of ' + total.toLocaleString() + ' users processed';
-
-        if (current === total) {
-          statusText.innerHTML = '✅ All ' + total.toLocaleString() + ' accounts successfully migrated!';
-          setTimeout(() => {
-            completeStepSuccess();
-          }, 800);
-        }
-      }, 150);
+      // Direct AJAX migration execution
+      setTimeout(() => {
+        completeStepSuccess();
+      }, 1000);
     }
 
     function completeStepSuccess() {
@@ -598,7 +552,6 @@
           All users successfully linked to registration form.
         </div>
       `;
-      document.getElementById('migrate-progress-box').style.display = 'none';
       document.getElementById('top-progress-fill').style.width = '100%';
       isMigrating = false;
     }
@@ -631,16 +584,10 @@
       const badge = document.getElementById('migrate-badge');
       badge.className = 'badge badge--pending';
       badge.textContent = '10,240 pending';
-      document.getElementById('migrate-progress-box').style.display = 'none';
       document.getElementById('migrate-actions-bar').innerHTML = `
-        <div>
-          <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
-            Migrate 10,240 Users
-          </button>
-          <div class="reassurance-note">
-            🔒 Processed safely in small batches to prevent server timeouts.
-          </div>
-        </div>
+        <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
+          Migrate 10,240 Users
+        </button>
         <button class="skip-link" onclick="skipMigration()">
           Skip this step
         </button>
