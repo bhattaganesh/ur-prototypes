@@ -395,16 +395,16 @@
             <div class="step-card__header" onclick="toggleStep('migrate')">
               <div class="step-card__title-box">
                 <span class="step-card__title" id="migrate-step-heading">3) Migrate Existing Users</span>
-                <span class="badge badge--pending" id="migrate-badge">10,240 pending</span>
+                <span class="badge badge--pending" id="migrate-badge">10,240 unlinked</span>
               </div>
               <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
 
             <div class="step-card__body" id="migrate-body">
               
-              <p class="step-desc">
-                Your site already has users who registered before User Registration & Membership was installed.
-                Migrate them so they are linked to a registration form and can view and edit their profile on the frontend.
+              <p class="step-desc" id="migrate-desc-text">
+                We detected <strong>10,240 existing user accounts</strong> created outside User Registration.
+                Link them to a registration form so they can view and update their profile details on your frontend account page.
               </p>
 
               <!-- Single Form Auto-Detection State -->
@@ -412,8 +412,8 @@
                 <div class="form-detect-left">
                   <div class="form-detect-icon">📋</div>
                   <div>
-                    <div class="form-detect-title">Users will be associated with <strong>Default Registration Form</strong></div>
-                    <div class="form-detect-hint">Only registration form on this site.</div>
+                    <div class="form-detect-title">Associated Form: <strong>Default Registration Form</strong></div>
+                    <div class="form-detect-hint">All existing accounts will be linked to this form's profile fields.</div>
                   </div>
                 </div>
               </div>
@@ -424,7 +424,7 @@
                   <div class="form-detect-icon">📋</div>
                   <div>
                     <div class="form-detect-title">Select Registration Form</div>
-                    <div class="form-detect-hint">Choose which form these accounts will be associated with:</div>
+                    <div class="form-detect-hint">Choose which form fields will be available when these users edit their profile:</div>
                   </div>
                 </div>
                 <select class="ur-select" id="form-select-dropdown">
@@ -432,6 +432,12 @@
                   <option value="102">Student Registration (ID: 102)</option>
                   <option value="103">VIP Member Form (ID: 103)</option>
                 </select>
+              </div>
+
+              <!-- Non-destructive Reassurance Note -->
+              <div class="reassurance-note" style="margin-bottom: 18px; color: #64748b; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <span>🔒</span>
+                <span>Existing passwords, user roles, and account data remain completely unchanged. No notification emails will be sent.</span>
               </div>
 
               <!-- Action Footer -->
@@ -498,8 +504,12 @@
         document.getElementById('top-progress-fill').style.width = '100%';
       } else {
         card.style.display = 'block';
-        document.getElementById('migrate-badge').textContent = num.toLocaleString() + ' pending';
-        document.getElementById('btn-migrate-action').textContent = 'Migrate ' + num.toLocaleString() + ' Users';
+        document.getElementById('migrate-badge').textContent = num.toLocaleString() + ' unlinked';
+        document.getElementById('btn-migrate-action').textContent = 'Migrate ' + num.toLocaleString() + (num === 1 ? ' User' : ' Users');
+        const descEl = document.getElementById('migrate-desc-text');
+        if (descEl) {
+          descEl.innerHTML = `We detected <strong>${num.toLocaleString()} existing user ${num === 1 ? 'account' : 'accounts'}</strong> created outside User Registration. Link them to a registration form so they can view and update their profile details on your frontend account page.`;
+        }
         document.getElementById('top-progress-fill').style.width = '75%';
       }
     }
@@ -583,7 +593,7 @@
       card.className = 'step-card is-active';
       const badge = document.getElementById('migrate-badge');
       badge.className = 'badge badge--pending';
-      badge.textContent = '10,240 pending';
+      badge.textContent = '10,240 unlinked';
       document.getElementById('migrate-actions-bar').innerHTML = `
         <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
           Migrate 10,240 Users
