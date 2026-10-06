@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration — Site Assistant: Migrate Existing Users Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ur-primary: #475bb2;
+      --ur-primary-hover: #38488e;
+      --ur-primary-50: #eff2fe;
+      --ur-text-heading: #1e293b;
+      --ur-text-body: #475569;
+      --ur-text-muted: #64748b;
+      --ur-border: #e2e8f0;
+      --ur-border-light: #f1f5f9;
+      --ur-bg-card: #ffffff;
+      --ur-bg-canvas: #f8fafc;
+      --ur-success: #16a34a;
+      --ur-success-bg: #f0fdf4;
+      --ur-success-border: #bbf7d0;
+      --ur-amber-bg: #fffbeb;
+      --ur-amber-border: #fde68a;
+      --ur-amber-text: #92400e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--ur-bg-canvas); color: var(--ur-text-body); font-size: 14px; line-height: 1.5; }
+
+    /* Top Prototype Testing Toolbar */
+    .proto-bar {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--ur-primary);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .proto-bar__title { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .proto-bar__actions { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .proto-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .proto-btn:hover { background: #334155; color: #fff; }
+    .proto-btn.active { background: var(--ur-primary); border-color: var(--ur-primary); color: #fff; }
+
+    /* WordPress Top Bar Mock */
+    .wp-admin-bar {
+      height: 32px;
+      background: #1d2327;
+      color: #c3c4c7;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    /* Layout */
+    .wp-layout { display: flex; min-height: calc(100vh - 84px); }
+    .wp-sidebar { width: 170px; background: #1d2327; color: #c3c4c7; flex-shrink: 0; padding-top: 12px; font-size: 13px; }
+    .wp-menu-item { padding: 9px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .wp-menu-item:hover { color: #fff; }
+    .wp-menu-item.active { background: #2271b1; color: #fff; font-weight: 600; }
+    .wp-submenu-item { padding: 7px 16px 7px 28px; font-size: 12px; color: #9da0a4; cursor: pointer; }
+    .wp-submenu-item.active { color: #fff; font-weight: 600; background: #191e23; }
+
+    /* Main Content Area */
+    .wp-main { flex: 1; padding: 24px 32px 60px; max-width: 1400px; }
+
+    /* Site Assistant Header */
+    .assistant-header { margin-bottom: 28px; }
+    .assistant-header__title { font-size: 24px; font-weight: 700; color: var(--ur-text-heading); letter-spacing: -0.02em; }
+    .assistant-header__desc { font-size: 14px; color: var(--ur-text-muted); margin-top: 4px; }
+    .assistant-progress-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 999px; margin-top: 12px; overflow: hidden; }
+    .assistant-progress-bar-fill { height: 100%; background: var(--ur-primary); border-radius: 999px; transition: width 0.3s ease; }
+
+    /* Two Column Layout Matching Site Assistant Chakra Grid */
+    .assistant-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Stack of Steps (Left) */
+    .steps-stack { display: flex; flex-direction: column; gap: 18px; }
+
+    /* Single Step Card Matching Chakra Stack (border: 1px solid #edf2f7, bg: white, p: 6) */
+    .step-card {
+      background: var(--ur-bg-card);
+      border: 1px solid var(--ur-border);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .step-card.is-active {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(71, 91, 178, 0.08);
+    }
+    .step-card.is-done {
+      border-color: var(--ur-success-border);
+      background: #fafdfa;
+    }
+
+    .step-card__header {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .step-card__title-box { display: flex; align-items: center; gap: 10px; }
+    .step-card__title { font-size: 16px; font-weight: 600; color: var(--ur-text-heading); }
+    
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      line-height: 1.4;
+    }
+    .badge--pending { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .badge--count { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .badge--done { background: var(--ur-success-bg); color: var(--ur-success); border: 1px solid var(--ur-success-border); }
+
+    .chevron-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #64748b;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.2s ease;
+    }
+    .step-card.is-active .chevron-icon { transform: rotate(180deg); stroke: var(--ur-primary); }
+
+    .step-card__body {
+      padding: 0 24px 24px;
+      display: none;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 20px;
+    }
+    .step-card.is-active .step-card__body { display: block; }
+
+    /* Step Card Content Styles */
+    .step-desc { font-size: 14px; color: var(--ur-text-body); margin-bottom: 20px; line-height: 1.6; }
+
+    /* Form Selection Card */
+    .form-detect-box {
+      background: #f8fafc;
+      border: 1px solid var(--ur-border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .form-detect-left { display: flex; align-items: center; gap: 12px; }
+    .form-detect-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--ur-primary-50);
+      color: var(--ur-primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .form-detect-title { font-size: 14px; font-weight: 600; color: var(--ur-text-heading); }
+    .form-detect-hint { font-size: 12px; color: var(--ur-text-muted); margin-top: 2px; }
+
+    .ur-select {
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--ur-text-heading);
+      min-width: 260px;
+      outline: none;
+    }
+    .ur-select:focus { border-color: var(--ur-primary); }
+
+    /* Action Footer */
+    .step-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 18px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .btn-primary {
+      background: var(--ur-primary);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+    .btn-primary:hover { background: var(--ur-primary-hover); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .skip-link {
+      color: #64748b;
+      font-size: 13px;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.15s ease;
+    }
+    .skip-link:hover { color: var(--ur-text-heading); }
+
+    /* Reassurance Microcopy */
+    .reassurance-note { font-size: 12px; color: var(--ur-text-muted); margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+
+    /* Progress Overlay / State */
+    .progress-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px solid var(--ur-border);
+      border-radius: 6px;
+      display: none;
+    }
+    .progress-bar-bg { width: 100%; height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin: 8px 0; }
+    .progress-bar-fill { height: 100%; width: 0%; background: var(--ur-primary); border-radius: 999px; transition: width 0.2s linear; }
+
+    /* Right Sidebar Widgets */
+    .sidebar-widget {
+      background: #fff;
+      border: 1px solid var(--ur-border);
+      border-radius: 8px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .sidebar-widget h4 { font-size: 15px; font-weight: 600; color: var(--ur-text-heading); display: flex; align-items: center; gap: 8px; }
+    .sidebar-widget p { font-size: 13px; color: var(--ur-text-muted); line-height: 1.5; }
+    .sidebar-widget a { color: var(--ur-primary); font-size: 13px; font-weight: 600; text-decoration: underline; }
+
+    /* Completed Success Callout */
+    .completion-banner {
+      background: var(--ur-success-bg);
+      border: 1px solid var(--ur-success-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .completion-banner strong { color: #15803d; font-size: 14px; }
+    .completion-banner span { color: #166534; font-size: 13px; }
+
+    /* Spinner */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Top Controller Bar for Testing -->
+  <div class="proto-bar">
+    <div class="proto-bar__title">
+      <span>⚡ Site Assistant Interactive Spec</span>
+      <span style="background: #334155; font-size: 11px; padding: 2px 8px; border-radius: 4px; color: #94a3b8;">Issue #1745 &bull; Phase 1</span>
+    </div>
+    <div class="proto-bar__actions">
+      <span>Simulate Unlinked Users:</span>
+      <button class="proto-btn active" id="btn-count-10k" onclick="setCount(10240)">10,240 Users</button>
+      <button class="proto-btn" id="btn-count-5" onclick="setCount(5)">5 Users</button>
+      <button class="proto-btn" id="btn-count-0" onclick="setCount(0)">0 Users (Step Hidden)</button>
+      <span style="margin: 0 4px; color: #475569;">|</span>
+      <span>Forms:</span>
+      <button class="proto-btn active" id="btn-form-1" onclick="setForms(1)">1 Form</button>
+      <button class="proto-btn" id="btn-form-many" onclick="setForms(3)">3 Forms</button>
+      <button class="proto-btn" onclick="resetDemo()" style="border-color: #e2e8f0; color: #fff;">Reset</button>
+    </div>
+  </div>
+
+  <!-- WordPress Top Admin Bar -->
+  <div class="wp-admin-bar">
+    <div><strong>Masteriyo &bull; User Registration</strong></div>
+    <div>Howdy, ganesh_bhatta</div>
+  </div>
+
+  <div class="wp-layout">
+    <!-- Left Admin Sidebar -->
+    <div class="wp-sidebar">
+      <div class="wp-menu-item">Dashboard</div>
+      <div class="wp-menu-item active">User Registration</div>
+      <div class="wp-submenu-item active">Site Assistant</div>
+      <div class="wp-submenu-item">All Forms</div>
+      <div class="wp-submenu-item">Settings</div>
+      <div class="wp-menu-item">Users</div>
+      <div class="wp-menu-item">Plugins</div>
+      <div class="wp-menu-item">Settings</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="wp-main">
+      
+      <div class="assistant-header">
+        <div class="assistant-header__title">Site Assistant</div>
+        <div class="assistant-header__desc">Finish these recommended steps to get your site ready.</div>
+        <div class="assistant-progress-bar-bg">
+          <div class="assistant-progress-bar-fill" id="top-progress-fill" style="width: 75%;"></div>
+        </div>
+      </div>
+
+      <!-- Grid Layout -->
+      <div class="assistant-grid">
+        
+        <!-- Left Steps Column -->
+        <div class="steps-stack">
+          
+          <!-- Step 1: Send Test Email (Completed) -->
+          <div class="step-card is-done" id="step-card-1">
+            <div class="step-card__header" onclick="toggleStep(1)">
+              <div class="step-card__title-box">
+                <span class="step-card__title">1) Send Test Email</span>
+                <span class="badge badge--done">✓ Done</span>
+              </div>
+              <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="step-card__body">
+              <p class="step-desc">Test email was verified and sent successfully to <code>admin@masteriiyo.local</code>.</p>
+            </div>
+          </div>
+
+          <!-- Step 2: Spam Protection (Completed) -->
+          <div class="step-card is-done" id="step-card-2">
+            <div class="step-card__header" onclick="toggleStep(2)">
+              <div class="step-card__title-box">
+                <span class="step-card__title">2) Spam Protection</span>
+                <span class="badge badge--done">✓ Done</span>
+              </div>
+              <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="step-card__body">
+              <p class="step-desc">reCaptcha v2 protection has been configured.</p>
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- STEP 3: MIGRATE EXISTING USERS (THE NEW STREAMLINED STEP) -->
+          <!-- ======================================================== -->
+          <div class="step-card is-active" id="step-card-migrate">
+            <div class="step-card__header" onclick="toggleStep('migrate')">
+              <div class="step-card__title-box">
+                <span class="step-card__title" id="migrate-step-heading">3) Migrate Existing Users</span>
+                <span class="badge badge--pending" id="migrate-badge">10,240 pending</span>
+              </div>
+              <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+
+            <div class="step-card__body" id="migrate-body">
+              
+              <p class="step-desc">
+                Your site already has users who registered before User Registration & Membership was installed.
+                Migrate them so they are linked to a registration form and can view and edit their profile on the frontend.
+              </p>
+
+              <!-- Single Form Auto-Detection State -->
+              <div class="form-detect-box" id="form-single-box">
+                <div class="form-detect-left">
+                  <div class="form-detect-icon">📋</div>
+                  <div>
+                    <div class="form-detect-title">Users will be associated with <strong>Default Registration Form</strong></div>
+                    <div class="form-detect-hint">Only registration form on this site.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Multiple Forms State (Clean Dropdown) -->
+              <div class="form-detect-box" id="form-multi-box" style="display: none;">
+                <div class="form-detect-left">
+                  <div class="form-detect-icon">📋</div>
+                  <div>
+                    <div class="form-detect-title">Select Registration Form</div>
+                    <div class="form-detect-hint">Choose which form these accounts will be associated with:</div>
+                  </div>
+                </div>
+                <select class="ur-select" id="form-select-dropdown">
+                  <option value="101" selected>Default Registration Form (ID: 101)</option>
+                  <option value="102">Student Registration (ID: 102)</option>
+                  <option value="103">VIP Member Form (ID: 103)</option>
+                </select>
+              </div>
+
+              <!-- Live Batch Progress Box -->
+              <div class="progress-box" id="migrate-progress-box">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--ur-text-heading);">
+                  <span id="progress-status-text"><span class="spinner"></span> Migrating accounts in batches...</span>
+                  <span id="progress-percent" style="color: var(--ur-primary);">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--ur-text-muted);">
+                  <span id="progress-count-text">0 of 10,240 users processed</span>
+                  <span>Safe batch execution &bull; Zero timeouts</span>
+                </div>
+              </div>
+
+              <!-- Action Footer -->
+              <div class="step-actions" id="migrate-actions-bar">
+                <div>
+                  <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
+                    Migrate 10,240 Users
+                  </button>
+                  <div class="reassurance-note">
+                    🔒 Processed safely in small batches to prevent server timeouts.
+                  </div>
+                </div>
+
+                <button class="skip-link" onclick="skipMigration()">
+                  Skip this step
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side Widgets -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          
+          <div class="sidebar-widget">
+            <h4>
+              <span>👥</span> Community & Support
+            </h4>
+            <p>
+              Join our exclusive group and connect with fellow User Registration & Membership members. Ask questions, contribute to discussions, and share feedback!
+            </p>
+            <a href="https://www.facebook.com/groups/userregistration" target="_blank">Join our Facebook Group &rarr;</a>
+          </div>
+
+          <div class="sidebar-widget">
+            <h4>
+              <span>📖</span> Documentation
+            </h4>
+            <p>
+              Need help configuring your forms or managing member permissions? Check our comprehensive documentation.
+            </p>
+            <a href="https://docs.wpuserregistration.com/" target="_blank">View Documentation &rarr;</a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let unlinkedCount = 10240;
+    let formCount = 1;
+    let isMigrating = false;
+
+    function setCount(num) {
+      unlinkedCount = num;
+      document.querySelectorAll('#btn-count-10k, #btn-count-5, #btn-count-0').forEach(b => b.classList.remove('active'));
+      if (num === 10240) document.getElementById('btn-count-10k').classList.add('active');
+      if (num === 5) document.getElementById('btn-count-5').classList.add('active');
+      if (num === 0) document.getElementById('btn-count-0').classList.add('active');
+
+      const card = document.getElementById('step-card-migrate');
+      if (num === 0) {
+        card.style.display = 'none';
+        document.getElementById('top-progress-fill').style.width = '100%';
+      } else {
+        card.style.display = 'block';
+        document.getElementById('migrate-badge').textContent = num.toLocaleString() + ' pending';
+        document.getElementById('btn-migrate-action').textContent = 'Migrate ' + num.toLocaleString() + ' Users';
+        document.getElementById('top-progress-fill').style.width = '75%';
+      }
+    }
+
+    function setForms(count) {
+      formCount = count;
+      document.getElementById('btn-form-1').classList.toggle('active', count === 1);
+      document.getElementById('btn-form-many').classList.toggle('active', count === 3);
+
+      if (count === 1) {
+        document.getElementById('form-single-box').style.display = 'flex';
+        document.getElementById('form-multi-box').style.display = 'none';
+      } else {
+        document.getElementById('form-single-box').style.display = 'none';
+        document.getElementById('form-multi-box').style.display = 'flex';
+      }
+    }
+
+    function toggleStep(id) {
+      if (isMigrating) return;
+      const card = (id === 'migrate') ? document.getElementById('step-card-migrate') : document.getElementById('step-card-' + id);
+      card.classList.toggle('is-active');
+    }
+
+    function runMigration() {
+      if (isMigrating) return;
+      isMigrating = true;
+
+      const btn = document.getElementById('btn-migrate-action');
+      const progressBox = document.getElementById('migrate-progress-box');
+      const fill = document.getElementById('progress-bar-fill');
+      const percent = document.getElementById('progress-percent');
+      const countText = document.getElementById('progress-count-text');
+      const statusText = document.getElementById('progress-status-text');
+
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      progressBox.style.display = 'block';
+
+      const total = unlinkedCount;
+      const chunkSize = Math.max(50, Math.floor(total / 15));
+      let current = 0;
+
+      const interval = setInterval(() => {
+        current += chunkSize;
+        if (current >= total) {
+          current = total;
+          clearInterval(interval);
+        }
+
+        const pct = Math.round((current / total) * 100);
+        fill.style.width = pct + '%';
+        percent.textContent = pct + '%';
+        countText.textContent = current.toLocaleString() + ' of ' + total.toLocaleString() + ' users processed';
+
+        if (current === total) {
+          statusText.innerHTML = '✅ All ' + total.toLocaleString() + ' accounts successfully migrated!';
+          setTimeout(() => {
+            completeStepSuccess();
+          }, 800);
+        }
+      }, 150);
+    }
+
+    function completeStepSuccess() {
+      const card = document.getElementById('step-card-migrate');
+      card.classList.remove('is-active');
+      card.classList.add('is-done');
+      
+      const badge = document.getElementById('migrate-badge');
+      badge.className = 'badge badge--done';
+      badge.textContent = '✓ Done';
+
+      document.getElementById('migrate-actions-bar').innerHTML = `
+        <div style="font-size: 13px; color: #166534; font-weight: 600;">
+          All users successfully linked to registration form.
+        </div>
+      `;
+      document.getElementById('migrate-progress-box').style.display = 'none';
+      document.getElementById('top-progress-fill').style.width = '100%';
+      isMigrating = false;
+    }
+
+    function skipMigration() {
+      if (!confirm('Are you sure you want to skip migrating existing users? You can always link users later from the All Users table.')) {
+        return;
+      }
+      const card = document.getElementById('step-card-migrate');
+      card.classList.remove('is-active');
+      card.classList.add('is-done');
+
+      const badge = document.getElementById('migrate-badge');
+      badge.className = 'badge badge--done';
+      badge.textContent = 'Skipped';
+
+      document.getElementById('migrate-actions-bar').innerHTML = `
+        <div style="font-size: 13px; color: #64748b;">
+          This step was skipped. Unlinked users remain available in All Users.
+        </div>
+      `;
+      document.getElementById('top-progress-fill').style.width = '100%';
+    }
+
+    function resetDemo() {
+      setCount(10240);
+      setForms(1);
+      const card = document.getElementById('step-card-migrate');
+      card.className = 'step-card is-active';
+      const badge = document.getElementById('migrate-badge');
+      badge.className = 'badge badge--pending';
+      badge.textContent = '10,240 pending';
+      document.getElementById('migrate-progress-box').style.display = 'none';
+      document.getElementById('migrate-actions-bar').innerHTML = `
+        <div>
+          <button class="btn-primary" id="btn-migrate-action" onclick="runMigration()">
+            Migrate 10,240 Users
+          </button>
+          <div class="reassurance-note">
+            🔒 Processed safely in small batches to prevent server timeouts.
+          </div>
+        </div>
+        <button class="skip-link" onclick="skipMigration()">
+          Skip this step
+        </button>
+      `;
+      isMigrating = false;
+    }
+  </script>
+</body>
+</html>
